@@ -12,6 +12,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+require("./config/db")();
 app.use("/api/v1", router);
 app.listen(process.env.PORT, function () {
   console.log("Server listening on", process.env.PORT);
