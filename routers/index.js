@@ -1,5 +1,5 @@
 const router = require("express").Router();
 
-router.get("/", () => console.log("using router"));
+router.get("/user", () => console.log("using user"));
 
 module.exports = router;
