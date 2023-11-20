@@ -1,35 +1,144 @@
 const Organizer = require("../models/organizer");
 
-const get_all_organizer = async () => {
+const createOrganizer = async (organizerData) => {
   try {
-    const result = await Organizer.find().sort({ createdAt: -1 });
-    return result;
+    const organizer = new Organizer(organizerData);
+    await organizer.save();
+    return organizer;
   } catch (error) {
-    return error;
+    throw error;
+  }
+}
+
+const getOrganizers = async () => {
+  try {
+    const organizers = await Organizer.find();
+    return organizers;
+  } catch (error) {
+    throw error;
   }
 };
 
-const get_organizer_by_id = async (organizerId) => {
+const getOrganizerById = async (organizerId) => {
   try {
-    const result = await Organizer.findById(organizerId);
-    return result;
+    const organizer = await Organizer.findById(organizerId);
+    if (!organizer) {
+      throw "Organizer not found";
+    }
+    return organizer;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
-const add_organizer = async (organizerData) => {
-  const organizer = new Organizer(organizerData);
-  try {
-    const result = await organizer.save();
-    return result;
-  } catch (error) {
-    return error;
+const updateOrganizer = async (organizerId, organizerData) => {
+  const updates = Object.keys(organizerData);
+  const allowedUpdates = [
+    "name",
+    "companyName",
+    "contact",
+    "bio",
+  ];
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    throw { error: "Invalid updates!" };
   }
+
+  try {
+    const organizer = await Organizer.findByIdAndUpdate(
+      organizerId,
+      organizerData,
+      { new: true, runValidators: true }
+    );
+
+    if (!organizer) {
+      throw "Organizer not found";
+    }
+
+    return organizer;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const manageOrganizerLevel = async (organizerId, accountLevel) => {
+  try {
+    const organizer = await Organizer.findByIdAndUpdate(
+      organizerId,
+      { $set: { accountLevel: accountLevel } },
+      { new: true, runValidators: true }
+    );
+
+    if (!organizer) {
+      throw "Organizer not found";
+    }
+
+    return organizer;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const manageOrganizerStatus = async (organizerId, accountStatus) => {
+  try {
+    const organizer = await Organizer.findByIdAndUpdate(
+      organizerId,
+      { $set: { accountStatus: accountStatus } },
+      { new: true, runValidators: true }
+    );
+
+    if (!organizer) {
+      throw "Organizer not found";
+    }
+
+    return organizer;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const changePhoneNumber = async (organizerId, phoneNo) => {
+  try {
+    const organizer = await Organizer.findByIdAndUpdate(
+      organizerId,
+      { $set: { phone: phoneNo } },
+      { new: true, runValidators: true }
+    );
+    if (!organizer) {
+      throw "Organizer not found";
+    }
+    return organizer;
+    } catch (error) {
+      throw error;
+    }
+};
+
+const changeEmail = async (organizerId, email) => {
+  try {
+    const organizer = await Organizer.findByIdAndUpdate(
+      organizerId,
+      { $set: { email: email } },
+      { new: true, runValidators: true }
+    );
+    if (!organizer) {
+      throw "Organizer not found";
+    }
+    return organizer;
+    } catch (error) {
+      throw error;
+    }
 };
 
 module.exports = {
-  get_all_organizer,
-  get_organizer_by_id,
-  add_organizer,
+  createOrganizer,
+  getOrganizers,
+  getOrganizerById,
+  updateOrganizer,
+  manageOrganizerLevel,
+  manageOrganizerStatus,
+  changePhoneNumber,
+  changeEmail,
 };
