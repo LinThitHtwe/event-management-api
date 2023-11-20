@@ -6,6 +6,9 @@ const adminSchema = new Schema(
     name: { type: String },
     phone: { type: String },
     email: { type: String },
+    password: { type: String },
+    role: { type: String },
+    isActive: { type: Boolean },
   },
   { timestamps: true }
 );
