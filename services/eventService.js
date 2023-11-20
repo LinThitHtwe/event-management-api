@@ -28,8 +28,21 @@ const add_event = async (eventData) => {
   }
 };
 
+const format_ui_date_to_db_date = (UIDate) => {
+  const originalDateStr = UIDate;
+  const originalDate = new Date(originalDateStr);
+  const formattedDate = originalDate.toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+  UIDate = formattedDate;
+  return UIDate;
+}
+
 module.exports = {
   get_all_event,
   get_event_by_id,
   add_event,
+  format_ui_date_to_db_date,
 };
