@@ -1,5 +1,5 @@
 const router = require("express").Router();
-
-router.get("/user", () => console.log("using user"));
+const upgradePaymentRoutes = require("./upgradePaymentRoutes");
+router.use("/upgrade-payment/", upgradePaymentRoutes);
 
 module.exports = router;

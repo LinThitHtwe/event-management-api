@@ -21,7 +21,24 @@ const get_upgrade_payment_by_id = async (upgradePaymentId) => {
 const add_upgrade_payment = async (upgradePaymentData) => {
   const upgradePayment = new UpgradePayment(upgradePaymentData);
   try {
+    upgradePayment.isActive = true;
     const result = await upgradePayment.save();
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const upgrade_upgrade_payment = async (
+  upgradePaymentId,
+  upgradePaymentData
+) => {
+  try {
+    const result = await UpgradePayment.findByIdAndUpdate(
+      upgradePaymentId,
+      upgradePaymentData
+    );
+
     return result;
   } catch (error) {
     return error;
@@ -32,4 +49,5 @@ module.exports = {
   get_all_upgrade_payment,
   get_upgrade_payment_by_id,
   add_upgrade_payment,
+  upgrade_upgrade_payment,
 };
