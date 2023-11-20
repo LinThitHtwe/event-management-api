@@ -5,9 +5,23 @@ const {
   upgrade_upgrade_payment,
 } = require("../services/upgradePaymentService");
 
+const messages = {
+  notFound: "No Data Found",
+  serverError: "Internal Server Error",
+};
+
 const getAllPaymentForAccountUpgradeAndTrendingLevel = async (req, res) => {
-  const data = await get_all_upgrade_payment();
-  return res.json(data);
+  try {
+    const data = await get_all_upgrade_payment();
+
+    if (data.length > 0) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(404).json({ message: messages.notFound });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: messages.serverError });
+  }
 };
 
 const addPaymentForAccountUpgradeAndTrendingLevel = (req, res) => {
@@ -17,14 +31,34 @@ const addPaymentForAccountUpgradeAndTrendingLevel = (req, res) => {
 
 const getOnePaymentForAccountUpgradeAndTrendingLevel = async (req, res) => {
   const updatePaymentId = req.params.upgradePaymentId;
-  const data = await get_upgrade_payment_by_id(updatePaymentId);
-  return res.json(data);
+
+  try {
+    const data = await get_upgrade_payment_by_id(updatePaymentId);
+
+    if (data.length > 0) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(404).json({ message: messages.notFound });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: messages.serverError });
+  }
 };
 
 const updatePaymentForAccountUpgradeAndTrendingLevel = async (req, res) => {
   const updatePaymentId = req.params.upgradePaymentId;
-  const data = await upgrade_upgrade_payment(updatePaymentId, req.body);
-  return res.json(data);
+  try {
+    const data = await upgrade_upgrade_payment(updatePaymentId, req.body);
+    if (data.length > 0) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(404).json({ message: messages.notFound });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: messages.serverError });
+  }
 };
 
 module.exports = {
