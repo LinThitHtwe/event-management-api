@@ -13,6 +13,7 @@ const eventSchema = new Schema(
     thumbnail: { type: String },
     description: { type: String },
     createdBy: { type: String },
+    trendingLevel: { type: String },
   },
   { timestamps: true }
 );

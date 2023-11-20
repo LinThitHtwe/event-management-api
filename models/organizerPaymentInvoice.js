@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const upgradeInvoiceSchema = new Schema(
+const organizerPaymentInvoiceSchema = new Schema(
   {
     amount: { type: String },
     organizer: {
@@ -12,9 +12,16 @@ const upgradeInvoiceSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "UpgradePayment",
     },
+    event: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+    },
   },
   { timestamps: true }
 );
 
-const UpgradeInvoice = mongoose.model("UpgradeInvoice", upgradeInvoiceSchema);
-module.exports = UpgradeInvoice;
+const OrganizerPaymentInvoice = mongoose.model(
+  "organizerPaymentInvoice",
+  organizerPaymentInvoiceSchema
+);
+module.exports = OrganizerPaymentInvoice;
