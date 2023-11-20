@@ -1,23 +1,23 @@
 const {
-    createOrganizer,
-    getOrganizers,
-    getOrganizerById,
-    updateOrganizer,
-    manageOrganizerLevel,
-    manageOrganizerStatus,
-    changeEmail,
-    changePhoneNumber,    
+    create_organizer,
+    get_organizers,
+    get_organizer_by_id,
+    update_organizer,
+    manage_organizer_level,
+    manage_organizer_status,
+    change_email,
+    change_phone,    
 } = require('../controllers/organizerController');
 const express = require('express');
 const router = express.Router();
 
-router.post('/create', createOrganizer);
-router.patch('/update/:id', updateOrganizer);
-router.patch('/update_level/:id/:level', manageOrganizerLevel);
-router.patch('/update_status/:id/:status', manageOrganizerStatus);
-router.patch('/update_phone/:id/:phone', changePhoneNumber);
-router.patch('/update_email/:id/:email', changeEmail);
-router.get('/get_all', getOrganizers);
-router.get('/:id', getOrganizerById);
+router.post('/create', create_organizer);
+router.patch('/update/:id', update_organizer);
+router.patch('/update_level/:id/:level', manage_organizer_level);
+router.patch('/update_status/:id/:status', manage_organizer_status);
+router.patch('/update_phone/:id/:phone', change_phone);
+router.patch('/update_email/:id/:email', change_email);
+router.get('/get_all', get_organizers);
+router.get('/:id', get_organizer_by_id);
 
 module.exports = router;

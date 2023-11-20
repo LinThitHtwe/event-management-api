@@ -1,35 +1,35 @@
 const organizerService = require("../services/organizerService");
 
-const createOrganizer = async (req, res) => {
+const create_organizer = async (req, res) => {
   try {
-    const organizer = await organizerService.createOrganizer(req.body);
+    const organizer = await organizerService.create_organizer(req.body);
     res.status(201).send(organizer);
   } catch (error) {
     res.status(400).send(error);
   }
 };
 
-const getOrganizers = async (req, res) => {
+const get_organizers = async (req, res) => {
   try {
-    const organizers = await organizerService.getOrganizers();
+    const organizers = await organizerService.get_organizers();
     res.send(organizers);
   } catch (error) {
     res.status(500).send(error);
   }
 };
 
-const getOrganizerById = async (req, res) => {
+const get_organizer_by_id = async (req, res) => {
   try {
-    const organizer = await organizerService.getOrganizerById(req.params.id);
+    const organizer = await organizerService.get_organizer_by_id(req.params.id);
     res.send(organizer);
   } catch (error) {
     res.status(404).send(error);
   }
 };
 
-const updateOrganizer = async (req, res) => {
+const update_organizer = async (req, res) => {
   try {
-    const organizer = await organizerService.updateOrganizer(
+    const organizer = await organizerService.update_organizer(
       req.params.id,
       req.body
     );
@@ -39,36 +39,48 @@ const updateOrganizer = async (req, res) => {
   }
 };
 
-const manageOrganizerLevel = async (req, res) => {
+const manage_organizer_level = async (req, res) => {
   try {
-    const organizer = await organizerService.manageOrganizerLevel(req.params.id, req.params.level);
+    const organizer = await organizerService.manage_organizer_level(
+      req.params.id,
+      req.params.level
+    );
     res.send(organizer);
   } catch (error) {
     res.status(400).send(error);
   }
 };
 
-const manageOrganizerStatus = async (req, res) => {
+const manage_organizer_status = async (req, res) => {
   try {
-    const organizer = await organizerService.manageOrganizerStatus(req.params.id, req.params.status);
+    const organizer = await organizerService.manage_organizer_status(
+      req.params.id,
+      req.params.status
+    );
     res.send(organizer);
   } catch (error) {
     res.status(400).send(error);
   }
 };
 
-const changePhoneNumber = async (req, res) => {
+const change_phone = async (req, res) => {
   try {
-    const organizer = await organizerService.changePhoneNumber(req.params.id, req.params.phone);
+    const organizer = await organizerService.change_phone(
+      req.params.id,
+      req.params.phone
+    );
     res.send(organizer);
   } catch (error) {
     res.status(400).send(error);
   }
 };
 
-const changeEmail = async (req, res) => {
+const change_email = async (req, res) => {
   try {
-    const organizer = await organizerService.changeEmail(req.params.id, req.params.email);
+    const organizer = await organizerService.change_email(
+      req.params.id,
+      req.params.email
+    );
     res.send(organizer);
   } catch (error) {
     res.status(400).send(error);
@@ -76,12 +88,12 @@ const changeEmail = async (req, res) => {
 };
 
 module.exports = {
-  createOrganizer,
-  getOrganizers,
-  getOrganizerById,
-  updateOrganizer,
-  manageOrganizerLevel,
-  manageOrganizerStatus,
-  changePhoneNumber,
-  changeEmail,
+  create_organizer,
+  get_organizers,
+  get_organizer_by_id,
+  update_organizer,
+  manage_organizer_level,
+  manage_organizer_status,
+  change_email,
+  change_phone,
 };

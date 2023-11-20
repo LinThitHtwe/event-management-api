@@ -1,6 +1,6 @@
 const Organizer = require("../models/organizer");
 
-const createOrganizer = async (organizerData) => {
+const create_organizer = async (organizerData) => {
   try {
     const organizer = new Organizer(organizerData);
     await organizer.save();
@@ -10,7 +10,7 @@ const createOrganizer = async (organizerData) => {
   }
 }
 
-const getOrganizers = async () => {
+const get_organizers = async () => {
   try {
     const organizers = await Organizer.find();
     return organizers;
@@ -19,7 +19,7 @@ const getOrganizers = async () => {
   }
 };
 
-const getOrganizerById = async (organizerId) => {
+const get_organizer_by_id = async (organizerId) => {
   try {
     const organizer = await Organizer.findById(organizerId);
     if (!organizer) {
@@ -31,7 +31,7 @@ const getOrganizerById = async (organizerId) => {
   }
 };
 
-const updateOrganizer = async (organizerId, organizerData) => {
+const update_organizer = async (organizerId, organizerData) => {
   const updates = Object.keys(organizerData);
   const allowedUpdates = [
     "name",
@@ -64,7 +64,7 @@ const updateOrganizer = async (organizerId, organizerData) => {
   }
 };
 
-const manageOrganizerLevel = async (organizerId, accountLevel) => {
+const manage_organizer_level = async (organizerId, accountLevel) => {
   try {
     const organizer = await Organizer.findByIdAndUpdate(
       organizerId,
@@ -82,7 +82,7 @@ const manageOrganizerLevel = async (organizerId, accountLevel) => {
   }
 };
 
-const manageOrganizerStatus = async (organizerId, accountStatus) => {
+const manage_organizer_status = async (organizerId, accountStatus) => {
   try {
     const organizer = await Organizer.findByIdAndUpdate(
       organizerId,
@@ -100,7 +100,7 @@ const manageOrganizerStatus = async (organizerId, accountStatus) => {
   }
 };
 
-const changePhoneNumber = async (organizerId, phoneNo) => {
+const change_phone = async (organizerId, phoneNo) => {
   try {
     const organizer = await Organizer.findByIdAndUpdate(
       organizerId,
@@ -116,7 +116,7 @@ const changePhoneNumber = async (organizerId, phoneNo) => {
     }
 };
 
-const changeEmail = async (organizerId, email) => {
+const change_email = async (organizerId, email) => {
   try {
     const organizer = await Organizer.findByIdAndUpdate(
       organizerId,
@@ -133,12 +133,12 @@ const changeEmail = async (organizerId, email) => {
 };
 
 module.exports = {
-  createOrganizer,
-  getOrganizers,
-  getOrganizerById,
-  updateOrganizer,
-  manageOrganizerLevel,
-  manageOrganizerStatus,
-  changePhoneNumber,
-  changeEmail,
+  create_organizer,
+  get_organizers,
+  get_organizer_by_id,
+  update_organizer,
+  manage_organizer_level,
+  manage_organizer_status,
+  change_phone,
+  change_email,
 };
