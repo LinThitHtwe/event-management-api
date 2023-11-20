@@ -5,6 +5,7 @@ const upgradePaymentSchema = new Schema(
   {
     name: { type: String },
     phone: { type: String },
+    isActive: { type: Boolean },
   },
   { timestamps: true }
 );
