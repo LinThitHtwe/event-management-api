@@ -10,6 +10,7 @@ const adminSchema = new Schema(
     password: { type: String },
     role: { type: String, default: "staff", enum: [role.superAdmin, role.staff] },
     isActive: { type: Boolean },
+    isVerfiy: { type: Boolean },
   },
   { timestamps: true }
 );
