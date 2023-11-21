@@ -16,7 +16,8 @@ const get_organizer_payment_invoice_by_id = async (
     const result = await OrganizerPaymentInvoice.findById(
       organizerPaymentInvoiceId
     );
-    return result;
+
+    return { data: result };
   } catch (error) {
     return error;
   }
