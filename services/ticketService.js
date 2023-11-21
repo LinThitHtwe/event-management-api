@@ -18,6 +18,18 @@ const get_ticket_by_id = async (ticketId) => {
   }
 };
 
+const is_customer_can_buy_more = async (ticketType, customerId) => {
+  try {
+    const count = await Ticket.countDocuments(
+      { customerId: customerId } && { ticketType: ticketType }
+    );
+    result = count >= 5 ? false : true;
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
 const add_ticket = async (ticketData) => {
   const ticket = new Ticket(ticketData);
   try {

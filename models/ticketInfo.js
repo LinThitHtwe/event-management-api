@@ -7,9 +7,9 @@ const ticketInfoSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",
     },
-    quantity: { type: String },
+    quantity: { type: Number },
     type: { type: String },
-    price: { type: String },
+    price: { type: Number },
   },
   { timestamps: true }
 );
