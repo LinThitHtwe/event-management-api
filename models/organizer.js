@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const role = require("../config/role");
 const organizerSchema = new Schema(
   {
     name: { type: String },
@@ -12,7 +12,8 @@ const organizerSchema = new Schema(
     accountLevel: { type: Number },
     accountStatus: { type: String },
     bio: { type: String },
-    isVerify: { type: Boolean },
+    role: { type: String, default: role.organzier },
+    isVerify: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

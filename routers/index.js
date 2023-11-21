@@ -14,7 +14,7 @@ router.use('/customer',customerRoutes);
 router.use("/admin", admin);
 router.use("/organizer", organizerRouter);
 router.use("/organizer-invoice/", organizerInvoiceRoutes);
-router.use("/event", eventRoute );
+router.use("/event", eventRoute);
 router.use("/upgrade-payment/", upgradePaymentRoutes);
 
 module.exports = router;

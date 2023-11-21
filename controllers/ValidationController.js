@@ -33,8 +33,14 @@ const organizerSchema = Joi.object({
   bio: Joi.string(),
 });
 
+const loginSchema = Joi.object({
+  email: Joi.string().required(),
+  password: Joi.string().required(),
+});
+
 module.exports = {
   adminSchema,
   organizerSchema,
+  loginSchema,
   validateEmail,
 };
