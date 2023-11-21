@@ -9,6 +9,7 @@ const organizerSchema = new Schema(
     companyName: { type: String },
     contact: { type: String },
     accountLevel: { type: String },
+    accountStatus: { type: String },
     bio: { type: String },
   },
   { timestamps: true }
