@@ -1,41 +1,48 @@
 console.log("placeholder");
-const { is_customer_can_buy_more } = require("../services/ticketService");
-const { get_ticket_info_by_id } = require("../services/ticketInfoService");
+const {
+  is_customer_can_buy_more,
+  add_ticket,
+  get_all_ticket,
+} = require("../services/ticketService");
+const {
+  get_all_ticket_info_by_event_id,
+} = require("../services/ticketInfoService");
 
-const add_ticket = (req, res) => { 
+const create_ticket = (req, res) => {
+  console.log(req.body);
+  const ticket = req.body;
+  if (!ticket) {
+    return res.json("Invalid ticket");
+  }
 
-    const ticket = req.body.ticket;
-    if (!ticket) {
-        return res.json("Invalid ticket");
-    }
+  const ticketInfo = get_all_ticket_info_by_event_id(ticket.event.id);
 
-    const ticketInfo = get_ticket_info_by_id(ticket.ticket_info_Id);
+  if (!ticketInfo) {
+    return res.json("Ticket not exists");
+  }
+  if (ticketInfo.quantity <= 0) {
+    return res.json("Ticket is sold out");
+  }
 
-    if (!ticketInfo) {
-        return res.json("Ticket not exists");
-    }
-    if (ticketInfo.quantity <= 0) {
-        return res.json("Ticket is sold out");
-    }
-    if (is_customer_can_buy_more(ticket.customer.email, ticketInfo.ticketType)) {
-
-        ticketService
-          .add_ticket(ticket.ticketId, ticket.quantity)
-          .then((result) => {
-            return res.json(result);
-          })
-          .catch((err) => {
-            return res.json(err);
-          });
-    }
-
+  if (is_customer_can_buy_more(ticket.customer.email, ticketInfo.ticketType)) {
+    add_ticket(ticket)
+      .then((result) => {
+        return res.json(result);
+      })
+      .catch((err) => {
+        return err;
+      });
+  } else {
     return res.json("You have reached the limit");
+  }
+};
 
-}
-
-const get_tickets = (req, res) => {
-}
+const get_tickets = async (req, res) => {
+  const result = await get_all_ticket();
+  res.json(result);
+};
 
 module.exports = {
-    add_ticket
-}
+  create_ticket,
+  get_tickets,
+};
