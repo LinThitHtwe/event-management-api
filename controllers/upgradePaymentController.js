@@ -35,7 +35,7 @@ const getOnePaymentForAccountUpgradeAndTrendingLevel = async (req, res) => {
   try {
     const data = await get_upgrade_payment_by_id(updatePaymentId);
 
-    if (data.length > 0) {
+    if (data.data) {
       return res.status(200).json(data);
     } else {
       return res.status(404).json({ message: messages.notFound });
@@ -50,7 +50,7 @@ const updatePaymentForAccountUpgradeAndTrendingLevel = async (req, res) => {
   const updatePaymentId = req.params.upgradePaymentId;
   try {
     const data = await upgrade_upgrade_payment(updatePaymentId, req.body);
-    if (data.length > 0) {
+    if (data.data) {
       return res.status(200).json(data);
     } else {
       return res.status(404).json({ message: messages.notFound });
