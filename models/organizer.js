@@ -10,6 +10,7 @@ const organizerSchema = new Schema(
     companyName: { type: String },
     contact: { type: String },
     accountLevel: { type: Number },
+    accountStatus: { type: String },
     bio: { type: String },
     isVerify: { type: Boolean },
   },
