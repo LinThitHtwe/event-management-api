@@ -16,7 +16,8 @@ const get_organizer_payment_invoice_by_id = async (
     const result = await OrganizerPaymentInvoice.findById(
       organizerPaymentInvoiceId
     );
-    return result;
+
+    return { data: result };
   } catch (error) {
     return error;
   }
@@ -35,7 +36,7 @@ const add_organizer_payment_invoice = async (organizerPaymentInvoiceData) => {
 };
 
 module.exports = {
-  get_all_organizer_payment_Invoice,
+  get_all_organizer_payment_invoice,
   get_organizer_payment_invoice_by_id,
   add_organizer_payment_invoice,
 };
