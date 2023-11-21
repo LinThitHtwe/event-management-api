@@ -4,7 +4,6 @@ const paymentSevice = require("../services/paymentService");
 const postCreateEvent = async (req, res, next) => {
   const eventData = req.body.event;
   const paymentData = req.body.payment;
-
   eventData.trendingLevel = eventData.trendingLevel || "0";
   eventData.createdBy = eventData.createdBy || "DefaultCreator";
   paymentData.organizer = paymentData.organizer || "1";
@@ -24,144 +23,97 @@ const postCreateEvent = async (req, res, next) => {
 
   const createdEvent = await eventService.add_event(eventData);
   const createdPayment = await paymentSevice.add_payment(paymentData);
-
   const resData = { createdEvent, createdPayment };
   res.json(resData);
 };
 
-const getEvent = async (req, res, next) =>{
+const getEvent = async (req, res, next) => {
   const getAllEvent = await eventService.get_all_event();
   res.json(getAllEvent);
-}
+};
 
-const getEventById = async(req, res, next) => {
+const getEventById = async (req, res, next) => {
   const eventId = req.params.eventId;
   const getEventById = await eventService.get_event_by_id(eventId);
   res.json(getEventById);
-}
+};
 
-const getSortvalue = async (req, res, next) => {
+const getSortValue = async (req, res, next) => {
   const sort = req.query.sort;
   const asc = req.query.asc;
   const events = await eventService.get_all_event();
 
-  if(sort === "eventStartDate" && asc === "true"){
-    const events = [
-      { date: "23/10/2023" },
-      { date: "15/05/2022" },
-      { date: "07/12/2023" }
-    ];
-    
-    // Sort events by date in ascending order
-    const sortedEventsAsc = events.sort((a, b) => {
-      const dateA = new Date(a.date.split('/').reverse().join('/'));
-      const dateB = new Date(b.date.split('/').reverse().join('/'));
-      return dateA - dateB;
-    });
-    
-    console.log(sortedEventsAsc);
-  }
-
-  if (sort === "eventName" && asc === "true") {
-    const eventNames = events.map((event) => event.name);
-    const ascEventNames = eventNames.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "eventName" && asc === "false") {
-    const eventNames = events.map((event) => event.name);
-    const descEventNames = eventNames.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "contact" && asc === "true") {
-    const eventContacts = events.map((event) => event.contact);
-    const ascEventNames = eventContacts.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "contact" && asc === "false") {
-    const eventContacts = events.map((event) => event.contact);
-    const descEventNames = eventContacts.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "location" && asc === "true") {
-    const eventLocations = events.map((event) => event.location);
-    const ascEventNames = eventLocations.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "location" && asc === "false") {
-    const eventLocations = events.map((event) => event.location);
-    const descEventNames = eventLocations.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "thumbnail" && asc === "true") {
-    const eventThumbnails = events.map((event) => event.thumbnail);
-    const ascEventNames = eventThumbnails.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "thumbnail" && asc === "false") {
-    const eventThumbnails = events.map((event) => event.thumbnail);
-    const descEventNames = eventThumbnails.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "description" && asc === "true") {
-    const eventDescriptions = events.map((event) => event.description);
-    const ascEventNames = eventDescriptions.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "description" && asc === "false") {
-    const eventDescriptions = events.map((event) => event.description);
-    const descEventNames = eventDescriptions.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "description" && asc === "true") {
-    const eventDescriptions = events.map((event) => event.description);
-    const ascEventNames = eventDescriptions.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "description" && asc === "false") {
-    const eventDescriptions = events.map((event) => event.description);
-    const descEventNames = eventDescriptions.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "createdBy" && asc === "true") {
-    const eventDescriptions = events.map((event) => event.createdBy);
-    const ascEventNames = eventDescriptions.sort();
-    res.json(ascEventNames);
-  }
-
-  if (sort === "createdBy" && asc === "false") {
-    const eventDescriptions = events.map((event) => event.createdBy);
-    const descEventNames = eventDescriptions.sort(() => 1);
-    res.json(descEventNames);
-  }
-
-  if (sort === "trendingLevel" && asc === "true") {
-    const eventTrends = events.map((event) => Number(event.trendingLevel));
-    const descEventTrends = eventTrends.sort((a, b) => a - b);
-    res.json(descEventTrends);
-  }
-
-  if (sort === "trendingLevel" && asc === "false") {
-    const eventTrends = events.map((event) => Number(event.trendingLevel));
-    const descEventTrends = eventTrends.sort((a, b) => b - a);
-    res.json(descEventTrends);
+  if (eventService.sortFunctions[sort]) {
+    const sortedData = eventService.sortFunctions[sort](events, asc);
+    res.json(sortedData);
+    console.log(sortedData);
+  } else {
+    res.status(400).json({ error: "Invalid sort type" });
   }
 };
 
+const searchValue = async (req, res, next) => {
+  const title = req.query.title;
+  const searchValue = req.query.searchValue;
+
+  const events = await eventService.get_all_event();
+
+  let filterDate = "";
+  
+  title != "" ?
+  filterDate = events.filter((event) => {
+    return (
+      (title === "name" && event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "eventStartDate" && event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
+      (title === "eventEndDate" && event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
+      (title === "ticketOpenDate" && event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
+      (title === "ticketCloseDate" && event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
+      (title === "contact" && event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "location" && event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "thumbnail" && event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "description" && event.description && event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "createdBy" && event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "trendingLevel" && event.trendingLevel && event.trendingLevel.includes(searchValue))
+    );
+  })
+:
+  filterDate = events.filter((event) => {
+    return (
+      ( event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
+      ( event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
+      ( event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
+      ( event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
+      ( event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.description && event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.trendingLevel && event.trendingLevel.includes(searchValue))
+    );
+  });
+
+  res.json(filterDate);
+};
+
+const bootsList = async (req, res, next) => {
+  const getAllEvent = await eventService.get_all_event();
+  res.json(getAllEvent);
+};
+
+const makeBoots = async (req, res, next) => {
+  const eventId = req.params.id;
+
+  const result = await eventService.make_boots(eventId);
+  res.json("Successfully boost");
+};
+
 module.exports = {
-  getSortvalue,
+  getSortValue,
   postCreateEvent,
   getEvent,
   getEventById,
+  searchValue,
+  bootsList,
+  makeBoots,
 };

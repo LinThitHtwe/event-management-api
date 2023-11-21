@@ -28,13 +28,8 @@ const add_payment = async (paymentData) => {
   }
 };
 
-const format_ui_date_to_db_date = async () => {
-
-}
-
 module.exports = {
   get_all_payment,
   get_payment_by_id,
   add_payment,
-  format_ui_date_to_db_date,
 };
