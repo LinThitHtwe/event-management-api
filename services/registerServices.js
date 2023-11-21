@@ -11,7 +11,7 @@ const Admin = require("../models/admin");
 const Organizer = require("../models/organizer");
 const Role = require("../config/role");
 const { add_admin } = require("../services/adminService");
-const { add_organizer } = require("../services/organizerService");
+const { create_organizer } = require("../services/organizerService");
 
 const sendEmail = async (email, subject, text) => {
   try {
@@ -73,7 +73,7 @@ const register = async (data, role, res) => {
     if (role === Role.superAdmin || role === Role.staff) {
       await add_admin(userToAdd);
     } else {
-      await add_organizer(userToAdd);
+      await create_organizer(userToAdd);
     }
     const token = jwt.sign(
       {
