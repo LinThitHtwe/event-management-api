@@ -3,9 +3,7 @@ const env = require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
 const router = require("./routers/index");
-const User = require("./models/user.model");
 
 const app = express();
 app.use(cookieParser());
@@ -15,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 require("./config/db")();
 app.use("/api/v1", router);
+
 app.listen(process.env.PORT, function () {
   console.log("Server listening on", process.env.PORT);
 });
