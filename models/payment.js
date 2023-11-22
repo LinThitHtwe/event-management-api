@@ -5,11 +5,10 @@ const paymentSchema = new Schema(
   {
     name: { type: String },
     phone: { type: String },
-    // organizer: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Organizer",
-    // },
-    organizer: { type: String },
+    organizer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organizer",
+    },
   },
   { timestamps: true }
 );

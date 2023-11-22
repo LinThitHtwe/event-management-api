@@ -93,81 +93,39 @@ const searchValue = async (req, res, next) => {
   const events = await eventService.get_all_event();
 
   let filterDate = "";
-
-  title != ""
-    ? (filterDate = events.filter((event) => {
-        return (
-          (title === "name" &&
-            event.name &&
-            event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (title === "eventStartDate" &&
-            event.eventStartDate &&
-            event.eventStartDate.includes(searchValue)) ||
-          (title === "eventEndDate" &&
-            event.eventEndDate &&
-            event.eventEndDate.includes(searchValue)) ||
-          (title === "ticketOpenDate" &&
-            event.ticketOpenDate &&
-            event.ticketOpenDate.includes(searchValue)) ||
-          (title === "ticketCloseDate" &&
-            event.ticketCloseDate &&
-            event.ticketCloseDate.includes(searchValue)) ||
-          (title === "contact" &&
-            event.contact &&
-            event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (title === "location" &&
-            event.location &&
-            event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (title === "thumbnail" &&
-            event.thumbnail &&
-            event.thumbnail
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (title === "description" &&
-            event.description &&
-            event.description
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (title === "createdBy" &&
-            event.createdBy &&
-            event.createdBy
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (title === "trendingLevel" &&
-            event.trendingLevel &&
-            event.trendingLevel.includes(searchValue))
-        );
-      }))
-    : (filterDate = events.filter((event) => {
-        return (
-          (event.name &&
-            event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.eventStartDate &&
-            event.eventStartDate.includes(searchValue)) ||
-          (event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
-          (event.ticketOpenDate &&
-            event.ticketOpenDate.includes(searchValue)) ||
-          (event.ticketCloseDate &&
-            event.ticketCloseDate.includes(searchValue)) ||
-          (event.contact &&
-            event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.location &&
-            event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.thumbnail &&
-            event.thumbnail
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (event.description &&
-            event.description
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (event.createdBy &&
-            event.createdBy
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (event.trendingLevel && event.trendingLevel.includes(searchValue))
-        );
-      }));
+  
+  title != "" ?
+  filterDate = events.filter((event) => {
+    return (
+      (title === "name" && event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "eventStartDate" && event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
+      (title === "eventEndDate" && event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
+      (title === "ticketOpenDate" && event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
+      (title === "ticketCloseDate" && event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
+      (title === "contact" && event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "location" && event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "thumbnail" && event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "description" && event.description && event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "createdBy" && event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
+      (title === "trendingLevel" && event.trendingLevel && event.trendingLevel.includes(searchValue))
+    );
+  })
+:
+  filterDate = events.filter((event) => {
+    return (
+      ( event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
+      ( event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
+      ( event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
+      ( event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
+      ( event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.description && event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
+      ( event.trendingLevel && event.trendingLevel.includes(searchValue))
+    );
+  });
 
   res.json(filterDate);
 };
