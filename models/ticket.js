@@ -19,5 +19,5 @@ const ticketSchema = new Schema(
   { timestamps: true }
 );
 
-const Ticket = mongoose.model("OrganizersOfEvent", ticketSchema);
+const Ticket = mongoose.model("Ticket", ticketSchema);
 module.exports = Ticket;

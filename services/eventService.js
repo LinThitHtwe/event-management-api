@@ -29,12 +29,19 @@ const make_boots = async (eventId) => {
   }
 };
 
-
-
 const add_event = async (eventData) => {
   const event = new Event(eventData);
   try {
     const result = await event.save();
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const delete_by_id = async (id) => {
+  try {
+    const result = await Event.findByIdAndDelete(id);
     return result;
   } catch (error) {
     return error;
@@ -134,12 +141,11 @@ const sortEvents_date = (data, asc) => {
   return sortedData;
 };
 
-
-
 module.exports = {
   get_all_event,
   get_event_by_id,
   add_event,
+  delete_by_id,
   format_ui_date_to_db_date,
   sortFunctions,
   sortEvents_text,

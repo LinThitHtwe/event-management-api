@@ -3,6 +3,7 @@ const Ticket = require("../models/ticket");
 const get_all_ticket = async () => {
   try {
     const result = await Ticket.find().sort({ createdAt: -1 });
+    console.log(result);
     return result;
   } catch (error) {
     return error;
@@ -12,6 +13,20 @@ const get_all_ticket = async () => {
 const get_ticket_by_id = async (ticketId) => {
   try {
     const result = await Ticket.findById(ticketId);
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const is_customer_can_buy_more = async (ticketType, customerId) => {
+  try {
+    const count = await Ticket.countDocuments(
+      { customerId: customerId } && { ticketType: ticketType }
+    );
+    console.log(count);
+    const result = count >= 5 ? false : true;
+    console.log(result);
     return result;
   } catch (error) {
     return error;
@@ -32,4 +47,5 @@ module.exports = {
   get_all_ticket,
   get_ticket_by_id,
   add_ticket,
+  is_customer_can_buy_more,
 };
