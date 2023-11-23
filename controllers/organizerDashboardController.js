@@ -8,6 +8,7 @@ const {
   get_all_ticket_info_by_event_id,
 } = require("../services/ticketInfoService");
 const { get_payment_by_organizer_id } = require("../services/paymentService");
+
 const totalTicketSale = async (req, res) => {
   const organizerId = req.params.organizerId;
   const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
@@ -20,10 +21,7 @@ const totalTicketSale = async (req, res) => {
     const tickets = await getTicketsByPaymentId(p._id);
     const ticketCount = tickets.length;
 
-    return {
-      paymentName: p.name,
-      ticketCount: ticketCount,
-    };
+    return [p.name, ticketCount];
   });
   const ticketCountByPayment = await Promise.all(ticketPromises);
 
