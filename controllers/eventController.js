@@ -2,29 +2,6 @@ const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
 const { add_ticket_info } = require("../services/ticketInfoService");
 
-const test = (req, res) => {
-  // const ticketInfo = {
-  //   quantity: 10,
-  //   type: "VVIP",
-  //   price: 35000,
-  //   event: "655dea0d4b7cb74d641075c2",
-  // };
-
-  // add_ticket_info(ticketInfo);
-  // name: { type: String },
-  // phone: { type: String },
-  // organizer: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Organizer",
-  // },
-  // const payment = {
-  //   name: "AYA Pay",
-  //   phone: "09456788595",
-  //   organizer: "655db72a40abeabdf4678ec9",
-  // };
-  // paymentSevice.add_payment(payment);
-  return res.json("Success");
-};
 
 const postCreateEvent = async (req, res, next) => {
   try {
@@ -217,5 +194,4 @@ module.exports = {
   bootsList,
   deleteById,
   makeBoots,
-  test,
 };
