@@ -4,6 +4,6 @@ const {
 
 const router = require("express").Router();
 
-router.get("/", totalTicketSale);
+router.get("/barchart/:organizerId", totalTicketSale);
 
 module.exports = router;
