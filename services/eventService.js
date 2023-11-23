@@ -72,81 +72,99 @@ const format_ui_date_to_db_date = (UIDate) => {
 };
 
 const sortFunctions = {
-  eventEndDate: (events, asc) =>
+  eventEndDate: (events, asc, sort) =>
     sortEvents_date(
-      events.map((event) => event.eventEndDate),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  ticketOpenDate: (events, asc) =>
+  ticketOpenDate: (events, asc, sort) =>
     sortEvents_date(
-      events.map((event) => event.ticketOpenDate),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  ticketCloseDate: (events, asc) =>
+  ticketCloseDate: (events, asc, sort) =>
     sortEvents_date(
-      events.map((event) => event.ticketCloseDate),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  eventStartDate: (events, asc) =>
+  eventStartDate: (events, asc, sort) =>
     sortEvents_date(
-      events.map((event) => event.eventStartDate),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
 
-  eventName: (events, asc) =>
+  eventName: (events, asc, sort) => 
     sortEvents_text(
-      events.map((event) => event.name),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  contact: (events, asc) =>
+  contact: (events, asc, sort) =>
     sortEvents_text(
-      events.map((event) => event.contact),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  location: (events, asc) =>
+  location: (events, asc, sort) =>
     sortEvents_text(
-      events.map((event) => event.location),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  thumbnail: (events, asc) =>
+  thumbnail: (events, asc, sort) =>
     sortEvents_text(
-      events.map((event) => event.thumbnail),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  description: (events, asc) =>
+  description: (events, asc, sort) =>
     sortEvents_text(
-      events.map((event) => event.description),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
-  createdBy: (events, asc) =>
+  createdBy: (events, asc, sort) =>
     sortEvents_text(
-      events.map((event) => event.createdBy),
-      asc
+      events.map((event) => event),
+      asc,
+      sort
     ),
 
   trendingLevel: (events, asc) =>
     sortEvents_trendingLevel(
-      events.map((event) => Number(event.trendingLevel)),
+      events.map((event) => event),
       asc
     ),
 };
 
-const sortEvents_text = (data, asc) => {
-  const sortedData = data.sort((a, b) =>
-    asc === "true" ? a.localeCompare(b) : b.localeCompare(a)
-  );
+const sortEvents_text = (data, asc, sort) => {
+  const sortedData = data.sort((a, b) => {
+    const nameA = a[sort]|| "";
+    const nameB = b[sort] || "";
+    return asc === "true"
+      ? nameA.localeCompare(nameB)
+      : nameB.localeCompare(nameA);
+  });
   return sortedData;
 };
 
 const sortEvents_trendingLevel = (data, asc) => {
-  const sortedData = data.sort((a, b) => (asc === "true" ? a - b : b - a));
+  const sortedData = data.sort((a, b) =>
+    asc === "true"
+      ? a.trendingLevel - b.trendingLevel
+      : b.trendingLevel - a.trendingLevel
+  );
   return sortedData;
 };
 
-const sortEvents_date = (data, asc) => {
+const sortEvents_date = (data, asc, sort) => {
   const sortedData = data.sort((a, b) => {
-    const dateA = new Date(a.split("/").reverse().join("/"));
-    const dateB = new Date(b.split("/").reverse().join("/"));
+    const dateA = new Date(a[sort].split("/").reverse().join("/"));
+    const dateB = new Date(b[sort].split("/").reverse().join("/"));
     return asc === "true" ? dateA - dateB : dateB - dateA;
   });
   return sortedData;
