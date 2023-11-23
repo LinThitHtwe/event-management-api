@@ -21,10 +21,16 @@ const totalTicketSale = async (req, res) => {
     const tickets = await getTicketsByPaymentId(p._id);
     const ticketCount = tickets.length;
 
-    return [p.name, ticketCount];
+    return { paymentName: p.name, ticketCount: ticketCount };
   });
   const ticketCountByPayment = await Promise.all(ticketPromises);
-
+  const toalTicketByPayment = [
+    ["Color", "Tickets"],
+    ...ticketCountByPayment.map(({ paymentName, ticketCount }) => [
+      paymentName,
+      ticketCount,
+    ]),
+  ];
   const eventTicketPromises = allEventsByOrganizer.map(async (event) => {
     const tickets = await getTicketsByEventId(event._id.toString());
     return { eventName: event.name, ticketCount: tickets.length };
@@ -59,7 +65,7 @@ const totalTicketSale = async (req, res) => {
   const returnValues = {
     totalTicketSaleByEvent: totalTicketSaleByEvent,
     totalTicketSaleByType: resultArray,
-    ticketCountByPayment: ticketCountByPayment,
+    toalTicketByPayment: toalTicketByPayment,
   };
   return res.json(returnValues);
 };
