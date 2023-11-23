@@ -6,9 +6,8 @@ const {
 const { get_event_by_organizer_id } = require("../services/eventService");
 const { get_ticketInfo_by_id } = require("../services/ticketInfoService");
 const totalTicketSale = async (req, res) => {
-  const allEventsByOrganizer = await get_event_by_organizer_id(
-    "655db72a40abeabdf4678ec9"
-  );
+  const organizerId = req.params.organizerId;
+  const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
 
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
