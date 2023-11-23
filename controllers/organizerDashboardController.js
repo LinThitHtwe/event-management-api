@@ -32,6 +32,15 @@ const totalTicketSale = async (req, res) => {
   return res.json(resultArray);
 };
 
+const getAllSoldTicketsCount = async (req, res) => {
+  const organizerId = req.params.organizerId;
+  const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
+  const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
+  const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
+  return res.json(allTickets[0].length);
+};
+
 module.exports = {
   totalTicketSale,
+  getAllSoldTicketsCount,
 };
