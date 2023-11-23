@@ -12,5 +12,4 @@ router.get('/create', () => console.log("hi") ); //make to get organizer id, cre
 router.post('/create', eventController.postCreateEvent );
 router.post('/boots/:id', eventController.makeBoots );
 
-
 module.exports = router;
