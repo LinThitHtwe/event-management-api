@@ -29,6 +29,17 @@ const make_boots = async (eventId) => {
   }
 };
 
+const get_event_by_organizer_id = async (organizerId) => {
+  try {
+    const result = await Event.find({ organizer: organizerId }).populate(
+      "organizer"
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
 const add_event = async (eventData) => {
   const event = new Event(eventData);
   try {
@@ -148,6 +159,7 @@ module.exports = {
   delete_by_id,
   format_ui_date_to_db_date,
   sortFunctions,
+  get_event_by_organizer_id,
   sortEvents_text,
   sortEvents_trendingLevel,
   sortEvents_date,
