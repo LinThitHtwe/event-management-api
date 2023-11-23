@@ -2,7 +2,6 @@ const router = require("express").Router();
 
 const eventController = require("../controllers/eventController");
 
-router.get("/test", eventController.test);
 router.get("/sort", eventController.getSortValue);
 router.get("/", eventController.getEvent);
 router.get("/search", eventController.searchValue);
