@@ -15,7 +15,7 @@ const create_ticket = (req, res) => {
     return res.json("Invalid ticket");
   }
 
-  const ticketInfo = get_all_ticket_info_by_event_id(ticket.event.id);
+  const ticketInfo = get_all_ticket_info_by_event_id(ticket.event);
 
   if (!ticketInfo) {
     return res.json("Ticket not exists");

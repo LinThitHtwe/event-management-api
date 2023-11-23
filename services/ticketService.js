@@ -43,9 +43,33 @@ const add_ticket = async (ticketData) => {
   }
 };
 
+const getTicketsByEventId = async (eventId) => {
+  try {
+    const result = await Ticket.find({ event: eventId }).populate(
+      "event ticketInfo"
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getTicketsByTicketInfoId = async (ticketInfoId) => {
+  try {
+    const result = await Ticket.find({ ticketInfo: ticketInfoId }).populate(
+      "ticketInfo"
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
 module.exports = {
   get_all_ticket,
   get_ticket_by_id,
   add_ticket,
   is_customer_can_buy_more,
+  getTicketsByEventId,
+  getTicketsByTicketInfoId,
 };

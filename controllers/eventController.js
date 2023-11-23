@@ -2,6 +2,30 @@ const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
 const { add_ticket_info } = require("../services/ticketInfoService");
 
+const test = (req, res) => {
+  // const ticketInfo = {
+  //   quantity: 10,
+  //   type: "VVIP",
+  //   price: 35000,
+  //   event: "655dea0d4b7cb74d641075c2",
+  // };
+
+  // add_ticket_info(ticketInfo);
+  // name: { type: String },
+  // phone: { type: String },
+  // organizer: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Organizer",
+  // },
+  // const payment = {
+  //   name: "AYA Pay",
+  //   phone: "09456788595",
+  //   organizer: "655db72a40abeabdf4678ec9",
+  // };
+  // paymentSevice.add_payment(payment);
+  return res.json("Success");
+};
+
 const postCreateEvent = async (req, res, next) => {
   try {
     const eventData = req.body.event;
@@ -93,39 +117,81 @@ const searchValue = async (req, res, next) => {
   const events = await eventService.get_all_event();
 
   let filterDate = "";
-  
-  title != "" ?
-  filterDate = events.filter((event) => {
-    return (
-      (title === "name" && event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
-      (title === "eventStartDate" && event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
-      (title === "eventEndDate" && event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
-      (title === "ticketOpenDate" && event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
-      (title === "ticketCloseDate" && event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
-      (title === "contact" && event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
-      (title === "location" && event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
-      (title === "thumbnail" && event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
-      (title === "description" && event.description && event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
-      (title === "createdBy" && event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
-      (title === "trendingLevel" && event.trendingLevel && event.trendingLevel.includes(searchValue))
-    );
-  })
-:
-  filterDate = events.filter((event) => {
-    return (
-      ( event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
-      ( event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
-      ( event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
-      ( event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
-      ( event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
-      ( event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
-      ( event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
-      ( event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
-      ( event.description && event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
-      ( event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
-      ( event.trendingLevel && event.trendingLevel.includes(searchValue))
-    );
-  });
+
+  title != ""
+    ? (filterDate = events.filter((event) => {
+        return (
+          (title === "name" &&
+            event.name &&
+            event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (title === "eventStartDate" &&
+            event.eventStartDate &&
+            event.eventStartDate.includes(searchValue)) ||
+          (title === "eventEndDate" &&
+            event.eventEndDate &&
+            event.eventEndDate.includes(searchValue)) ||
+          (title === "ticketOpenDate" &&
+            event.ticketOpenDate &&
+            event.ticketOpenDate.includes(searchValue)) ||
+          (title === "ticketCloseDate" &&
+            event.ticketCloseDate &&
+            event.ticketCloseDate.includes(searchValue)) ||
+          (title === "contact" &&
+            event.contact &&
+            event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (title === "location" &&
+            event.location &&
+            event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (title === "thumbnail" &&
+            event.thumbnail &&
+            event.thumbnail
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (title === "description" &&
+            event.description &&
+            event.description
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (title === "createdBy" &&
+            event.createdBy &&
+            event.createdBy
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (title === "trendingLevel" &&
+            event.trendingLevel &&
+            event.trendingLevel.includes(searchValue))
+        );
+      }))
+    : (filterDate = events.filter((event) => {
+        return (
+          (event.name &&
+            event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.eventStartDate &&
+            event.eventStartDate.includes(searchValue)) ||
+          (event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
+          (event.ticketOpenDate &&
+            event.ticketOpenDate.includes(searchValue)) ||
+          (event.ticketCloseDate &&
+            event.ticketCloseDate.includes(searchValue)) ||
+          (event.contact &&
+            event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.location &&
+            event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.thumbnail &&
+            event.thumbnail
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (event.description &&
+            event.description
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (event.createdBy &&
+            event.createdBy
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (event.trendingLevel && event.trendingLevel.includes(searchValue))
+        );
+      }));
 
   res.json(filterDate);
 };
@@ -151,4 +217,5 @@ module.exports = {
   bootsList,
   deleteById,
   makeBoots,
+  test,
 };
