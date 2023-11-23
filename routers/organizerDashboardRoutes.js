@@ -1,11 +1,11 @@
 const {
   totalTicketSale,
-  getAllSoldTicketsCount,
+  getAllOverviewData,
 } = require("../controllers/organizerDashboardController");
 
 const router = require("express").Router();
 
 router.get("/barchart/:organizerId", totalTicketSale);
-router.get("/total-ticket-sell/:organizerId", getAllSoldTicketsCount);
+router.get("/overview-data/:organizerId", getAllOverviewData);
 
 module.exports = router;

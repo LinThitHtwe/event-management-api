@@ -4,7 +4,9 @@ const {
 } = require("../services/ticketService");
 
 const { get_event_by_organizer_id } = require("../services/eventService");
-const { get_ticketInfo_by_id } = require("../services/ticketInfoService");
+const {
+  get_all_ticket_info_by_event_id,
+} = require("../services/ticketInfoService");
 const totalTicketSale = async (req, res) => {
   const organizerId = req.params.organizerId;
   const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
@@ -32,15 +34,42 @@ const totalTicketSale = async (req, res) => {
   return res.json(resultArray);
 };
 
-const getAllSoldTicketsCount = async (req, res) => {
+const getAllOverviewData = async (req, res) => {
   const organizerId = req.params.organizerId;
   const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
-  return res.json(allTickets[0].length);
-};
 
+  const ticketInfos = await Promise.all(
+    eventIds.map(get_all_ticket_info_by_event_id)
+  );
+
+  const totalTicketsToSell = ticketInfos.reduce((total, tickets) => {
+    return (
+      total +
+      tickets.reduce((ticketTotal, ticket) => {
+        return ticketTotal + ticket.quantity;
+      }, 0)
+    );
+  }, 0);
+  const totalPrice = allTickets.reduce((total, tickets) => {
+    return (
+      total +
+      tickets.reduce((ticketTotal, ticket) => {
+        return ticketTotal + ticket.ticketInfo.price;
+      }, 0)
+    );
+  }, 0);
+  const overviewData = {
+    totalTicketsSold: allTickets[0].length,
+    totalPrice: totalPrice,
+    allTotalAvaliableTickets: totalTicketsToSell,
+    ticketsLeftToSell: totalTicketsToSell - allTickets[0].length,
+  };
+  return res.json(overviewData);
+};
 module.exports = {
   totalTicketSale,
-  getAllSoldTicketsCount,
+
+  getAllOverviewData,
 };

@@ -20,7 +20,7 @@ const get_ticketInfo_by_id = async (ticketInfoId) => {
 
 const get_all_ticket_info_by_event_id = async (eventId) => {
   try {
-    const result = await TicketInfo.findByEventId(eventId);
+    const result = await TicketInfo.find({ event: eventId }).populate("event");
     return result;
   } catch (error) {
     return error;
