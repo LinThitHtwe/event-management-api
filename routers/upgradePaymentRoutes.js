@@ -4,7 +4,7 @@ const {
   getOnePaymentForAccountUpgradeAndTrendingLevel,
   addPaymentForAccountUpgradeAndTrendingLevel,
   updatePaymentForAccountUpgradeAndTrendingLevel,
-} = require("../controllers/paymentController");
+} = require("../controllers/upgradePaymentController");
 
 router.get("/all", getAllPaymentForAccountUpgradeAndTrendingLevel);
 

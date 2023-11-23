@@ -18,7 +18,16 @@ const get_ticketInfo_by_id = async (ticketInfoId) => {
   }
 };
 
-const add_ticketInfo = async (ticketInfoData) => {
+const get_all_ticket_info_by_event_id = async (eventId) => {
+  try {
+    const result = await TicketInfo.findByEventId(eventId);
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const add_ticket_info = async (ticketInfoData) => {
   const ticketInfo = new TicketInfo(ticketInfoData);
   try {
     const result = await ticketInfo.save();
@@ -31,5 +40,6 @@ const add_ticketInfo = async (ticketInfoData) => {
 module.exports = {
   get_all_ticketInfo,
   get_ticketInfo_by_id,
-  add_ticketInfo,
+  add_ticket_info,
+  get_all_ticket_info_by_event_id,
 };

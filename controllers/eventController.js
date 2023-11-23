@@ -1,30 +1,64 @@
 const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
+const { add_ticket_info } = require("../services/ticketInfoService");
 
 const postCreateEvent = async (req, res, next) => {
-  const eventData = req.body.event;
-  const paymentData = req.body.payment;
-  eventData.trendingLevel = eventData.trendingLevel || "0";
-  eventData.createdBy = eventData.createdBy || "DefaultCreator";
-  paymentData.organizer = paymentData.organizer || "1";
+  try {
+    const eventData = req.body.event;
+    const paymentData = req.body.payment;
+    const { tickets } = req.body;
+    console.log(req.body);
+    eventData.trendingLevel = eventData.trendingLevel || "0";
+    eventData.createdBy = eventData.createdBy || "DefaultCreator";
+    paymentData.organizer = paymentData.organizer || "1";
 
-  eventData.eventStartDate = eventService.format_ui_date_to_db_date(
-    eventData.eventStartDate
-  );
-  eventData.eventEndDate = eventService.format_ui_date_to_db_date(
-    eventData.eventEndDate
-  );
-  eventData.ticketOpenDate = eventService.format_ui_date_to_db_date(
-    eventData.ticketOpenDate
-  );
-  eventData.ticketCloseDate = eventService.format_ui_date_to_db_date(
-    eventData.ticketCloseDate
-  );
+    eventData.eventStartDate = eventService.format_ui_date_to_db_date(
+      eventData.eventStartDate
+    );
+    eventData.eventEndDate = eventService.format_ui_date_to_db_date(
+      eventData.eventEndDate
+    );
+    eventData.ticketOpenDate = eventService.format_ui_date_to_db_date(
+      eventData.ticketOpenDate
+    );
+    eventData.ticketCloseDate = eventService.format_ui_date_to_db_date(
+      eventData.ticketCloseDate
+    );
 
-  const createdEvent = await eventService.add_event(eventData);
-  const createdPayment = await paymentSevice.add_payment(paymentData);
-  const resData = { createdEvent, createdPayment };
-  res.json(resData);
+    const createdEvent = await eventService.add_event(eventData);
+    const createdPayment = await paymentSevice.add_payment(paymentData);
+
+    const createdTicketInfoPromises = tickets.map(async (tic) => {
+      const eventId = createdEvent._id;
+      const ticket = { ...tic, eventId };
+      try {
+        const ticketInfo = await add_ticket_info(ticket);
+        if (!ticketInfo) {
+          console.log("Ticket info not created successfully");
+          eventService.delete_by_id(createdEvent._id);
+        }
+        return ticketInfo;
+      } catch (error) {
+        console.error("Error creating ticket info:", error);
+        eventService.delete_by_id(createdEvent._id);
+        throw error;
+      }
+    });
+
+    const createdTicketInfo = await Promise.all(createdTicketInfoPromises);
+
+    const resData = { createdEvent, createdPayment, createdTicketInfo };
+    res.json(resData);
+  } catch (error) {
+    console.error("Error in postCreateEvent:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const deleteById = async (req, res) => {
+  const { id } = req.params;
+  eventService.delete_by_id(id);
+  res.json("Successfully Delete");
 };
 
 const getEvent = async (req, res, next) => {
@@ -115,5 +149,6 @@ module.exports = {
   getEventById,
   searchValue,
   bootsList,
+  deleteById,
   makeBoots,
 };

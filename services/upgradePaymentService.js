@@ -12,9 +12,9 @@ const get_all_upgrade_payment = async () => {
 const get_upgrade_payment_by_id = async (upgradePaymentId) => {
   try {
     const result = await UpgradePayment.findById(upgradePaymentId);
-    return result;
+    return { data: result };
   } catch (error) {
-    return error;
+    return { error: error };
   }
 };
 
@@ -39,9 +39,9 @@ const upgrade_upgrade_payment = async (
       upgradePaymentData
     );
 
-    return result;
+    return { data: result };
   } catch (error) {
-    return error;
+    return { error: error };
   }
 };
 

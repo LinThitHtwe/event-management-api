@@ -3,7 +3,6 @@ const env = require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
 const router = require("./routers/index");
 
 const app = express();
