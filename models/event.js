@@ -12,7 +12,7 @@ const eventSchema = new Schema(
     location: { type: String },
     thumbnail: { type: String },
     description: { type: String },
-    createdBy: { type: String },
+    organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Organizer" },
     trendingLevel: { type: String },
   },
   { timestamps: true }

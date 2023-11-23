@@ -27,7 +27,6 @@ const add_customer = async (customerData) => {
     return error;
   }
 };
-
 module.exports = {
   get_all_customer,
   get_customer_by_id,

@@ -15,6 +15,10 @@ const ticketSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payment",
     },
+    event: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+    },
   },
   { timestamps: true }
 );
