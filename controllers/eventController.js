@@ -77,10 +77,12 @@ const getSortValue = async (req, res, next) => {
   const asc = req.query.asc;
   const events = await eventService.get_all_event();
 
+  console.log(events);
+
   if (eventService.sortFunctions[sort]) {
-    const sortedData = eventService.sortFunctions[sort](events, asc);
+    console.log(sort, eventService.sortFunctions[sort]);
+    const sortedData = eventService.sortFunctions[sort](events, asc, sort);
     res.json(sortedData);
-    console.log(sortedData);
   } else {
     res.status(400).json({ error: "Invalid sort type" });
   }
@@ -173,7 +175,9 @@ const searchValue = async (req, res, next) => {
 };
 
 const bootsList = async (req, res, next) => {
+  const isAsc = req.query.asc;
   const getAllEvent = await eventService.get_all_event();
+
   res.json(getAllEvent);
 };
 
