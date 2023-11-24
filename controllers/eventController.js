@@ -1,6 +1,10 @@
 const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
-const { add_ticket_info } = require("../services/ticketInfoService");
+const {
+  add_ticket_info,
+  get_all_ticket_info_by_event_id,
+} = require("../services/ticketInfoService");
+const { getTicketsByEventId } = require("../services/ticketService");
 
 const postCreateEvent = async (req, res, next) => {
   try {
@@ -188,6 +192,57 @@ const makeBoots = async (req, res, next) => {
   res.json("Successfully boost");
 };
 
+const getTotalAvailableTicketByEvent = async (req, res) => {
+  const eventId = req.params.eventId;
+  const ticketInfos = await get_all_ticket_info_by_event_id(eventId);
+
+  if (ticketInfos.error) {
+    return res.status(404).json("404 not found");
+  }
+  const totalTicketCounts = {};
+
+  ticketInfos.forEach((ticket) => {
+    const { type, quantity } = ticket;
+    if (totalTicketCounts[type]) {
+      totalTicketCounts[type] += quantity;
+    } else {
+      totalTicketCounts[type] = quantity;
+    }
+  });
+
+  const totalSoldTicketByEventId = await getTicketsByEventId(eventId);
+  if (totalSoldTicketByEventId.error) {
+    return res.status(404).json("404 not found");
+  }
+  const soldTicketCounts = {
+    Normal: 0,
+    VIP: 0,
+    VVIP: 0,
+  };
+
+  totalSoldTicketByEventId.forEach((ticket) => {
+    const { type, quantity } = ticket.ticketInfo;
+    if (soldTicketCounts[type]) {
+      soldTicketCounts[type] += 1;
+    } else {
+      soldTicketCounts[type] = 1;
+    }
+  });
+
+  const remainingTickets = {};
+
+  for (const type in totalTicketCounts) {
+    if (soldTicketCounts[type]) {
+      const remainingCount = totalTicketCounts[type] - soldTicketCounts[type];
+      remainingTickets[type] = remainingCount;
+    } else {
+      remainingTickets[type] = totalTicketCounts[type];
+    }
+  }
+
+  return res.json(remainingTickets);
+};
+
 module.exports = {
   getSortValue,
   postCreateEvent,
@@ -197,4 +252,5 @@ module.exports = {
   bootsList,
   deleteById,
   makeBoots,
+  getTotalAvailableTicketByEvent,
 };

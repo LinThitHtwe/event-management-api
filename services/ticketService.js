@@ -48,7 +48,7 @@ const getTicketsByEventId = async (eventId) => {
     );
     return result;
   } catch (error) {
-    return error;
+    return { error: error };
   }
 };
 

@@ -13,9 +13,8 @@ const organizerPaymentInvoiceSchema = new Schema(
       ref: "UpgradePayment",
     },
     event: {
-      // type: mongoose.Schema.Types.ObjectId,
-      // ref: "Event",
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
     },
   },
   { timestamps: true }
