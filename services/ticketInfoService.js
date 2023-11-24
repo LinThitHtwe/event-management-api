@@ -23,7 +23,7 @@ const get_all_ticket_info_by_event_id = async (eventId) => {
     const result = await TicketInfo.find({ event: eventId }).populate("event");
     return result;
   } catch (error) {
-    return error;
+    return { error: error };
   }
 };
 
