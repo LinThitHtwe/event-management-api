@@ -41,22 +41,25 @@ const login = async (data, role, res) => {
 
     const match = await bcrypt.compare(password, foundUser.password);
     if (match) {
-      const role = Object.values(foundUser.role);
       const accessToken = jwt.sign(
         {
           UserInfo: {
             email: foundUser.email,
-            role: role,
+            role: foundUser.role,
           },
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30s",
+          expiresIn: "5m",
         }
       );
-      const refreshToken = jwt.sign({ email: foundUser.email }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-      });
+      const refreshToken = jwt.sign(
+        { email: foundUser.email, role: foundUser.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "None",

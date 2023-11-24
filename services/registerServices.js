@@ -99,7 +99,7 @@ const register = async (data, role, res) => {
 
     const userId = user._id;
 
-    const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}/${token}`;
+    const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}`;
     await sendEmail(data.email, "Verify Email", send_message);
 
     return res.status(201).json({
