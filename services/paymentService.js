@@ -18,6 +18,17 @@ const get_payment_by_id = async (paymentId) => {
   }
 };
 
+const get_payment_by_organizer_id = async (organizerId) => {
+  try {
+    const result = await Payment.find({ organizer: organizerId }).populate(
+      "organizer"
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
 const add_payment = async (paymentData) => {
   const payment = new Payment(paymentData);
   try {
@@ -32,4 +43,5 @@ module.exports = {
   get_all_payment,
   get_payment_by_id,
   add_payment,
+  get_payment_by_organizer_id,
 };

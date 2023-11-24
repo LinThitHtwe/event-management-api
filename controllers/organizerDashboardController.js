@@ -1,26 +1,58 @@
 const {
   getTicketsByEventId,
-  getTicketsByTicketInfoId,
+  getTicketsByPaymentId,
 } = require("../services/ticketService");
 
 const { get_event_by_organizer_id } = require("../services/eventService");
-const { get_ticketInfo_by_id } = require("../services/ticketInfoService");
+const {
+  get_all_ticket_info_by_event_id,
+} = require("../services/ticketInfoService");
+const { get_payment_by_organizer_id } = require("../services/paymentService");
+
 const totalTicketSale = async (req, res) => {
   const organizerId = req.params.organizerId;
   const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
 
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
-  const ticketInfoIds = allTickets.flatMap((tickets) =>
-    tickets.map((ticket) => ticket)
-  );
-  const ticketTypeCounts = new Map();
+  const payment = await get_payment_by_organizer_id(organizerId);
 
-  ticketInfoIds.forEach((ticket) => {
-    const type = ticket.ticketInfo.type;
-    const count = ticketTypeCounts.get(type) || 0;
-    ticketTypeCounts.set(type, count + 1);
+  const ticketPromises = payment.map(async (p) => {
+    const tickets = await getTicketsByPaymentId(p._id);
+    const ticketCount = tickets.length;
+
+    return { paymentName: p.name, ticketCount: ticketCount };
   });
+  const ticketCountByPayment = await Promise.all(ticketPromises);
+  const toalTicketByPayment = [
+    ["Color", "Tickets"],
+    ...ticketCountByPayment.map(({ paymentName, ticketCount }) => [
+      paymentName,
+      ticketCount,
+    ]),
+  ];
+  const eventTicketPromises = allEventsByOrganizer.map(async (event) => {
+    const tickets = await getTicketsByEventId(event._id.toString());
+    return { eventName: event.name, ticketCount: tickets.length };
+  });
+  const eventTicketCounts = await Promise.all(eventTicketPromises);
+
+  const totalTicketSaleByEvent = [
+    ["Total ticket Sale By Event", "Total"],
+    ...eventTicketCounts.map(({ eventName, ticketCount }) => [
+      eventName,
+      ticketCount,
+    ]),
+  ];
+
+  const ticketTypeCounts = new Map();
+  allTickets
+    .flatMap((tickets) => tickets.map((ticket) => ticket))
+    .forEach((ticket) => {
+      const type = ticket.ticketInfo.type;
+      const count = ticketTypeCounts.get(type) || 0;
+      ticketTypeCounts.set(type, count + 1);
+    });
 
   const resultArray = [
     ["Total Ticket Scale", "Amount"],
@@ -29,18 +61,51 @@ const totalTicketSale = async (req, res) => {
       count,
     ]),
   ];
-  return res.json(resultArray);
+
+  const returnValues = {
+    totalTicketSaleByEvent: totalTicketSaleByEvent,
+    totalTicketSaleByType: resultArray,
+    toalTicketByPayment: toalTicketByPayment,
+  };
+  return res.json(returnValues);
 };
 
-const getAllSoldTicketsCount = async (req, res) => {
+const getAllOverviewData = async (req, res) => {
   const organizerId = req.params.organizerId;
   const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
-  return res.json(allTickets[0].length);
-};
 
+  const ticketInfos = await Promise.all(
+    eventIds.map(get_all_ticket_info_by_event_id)
+  );
+
+  const totalTicketsToSell = ticketInfos.reduce((total, tickets) => {
+    return (
+      total +
+      tickets.reduce((ticketTotal, ticket) => {
+        return ticketTotal + ticket.quantity;
+      }, 0)
+    );
+  }, 0);
+  const totalPrice = allTickets.reduce((total, tickets) => {
+    return (
+      total +
+      tickets.reduce((ticketTotal, ticket) => {
+        return ticketTotal + ticket.ticketInfo.price;
+      }, 0)
+    );
+  }, 0);
+  const overviewData = {
+    totalTicketsSold: allTickets[0].length,
+    totalPrice: totalPrice,
+    allTotalAvaliableTickets: totalTicketsToSell,
+    ticketsLeftToSell: totalTicketsToSell - allTickets[0].length,
+  };
+  return res.json(overviewData);
+};
 module.exports = {
   totalTicketSale,
-  getAllSoldTicketsCount,
+
+  getAllOverviewData,
 };

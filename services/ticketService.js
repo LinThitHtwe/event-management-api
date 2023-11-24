@@ -46,7 +46,18 @@ const add_ticket = async (ticketData) => {
 const getTicketsByEventId = async (eventId) => {
   try {
     const result = await Ticket.find({ event: eventId }).populate(
-      "event ticketInfo"
+      "event ticketInfo payment"
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getTicketsByPaymentId = async (paymentId) => {
+  try {
+    const result = await Ticket.find({ payment: paymentId }).populate(
+      "event ticketInfo payment"
     );
     return result;
   } catch (error) {
@@ -72,4 +83,5 @@ module.exports = {
   is_customer_can_buy_more,
   getTicketsByEventId,
   getTicketsByTicketInfoId,
+  getTicketsByPaymentId,
 };
