@@ -17,6 +17,6 @@ router.use("/organizer", organizerRouter);
 router.use("/organizer-invoice/", organizerInvoiceRoutes);
 router.use("/event", eventRoute);
 router.use("/ticket", ticketRoutes);
-router.use("/upgrade-payment/", upgradePaymentRoutes);
+router.use("/upgrade-payment", upgradePaymentRoutes);
 router.use("/organizer-dashboard", organizerDashboardRoutes);
 module.exports = router;

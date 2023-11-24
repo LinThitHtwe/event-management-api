@@ -9,7 +9,6 @@ const {
 } = require("../services/ticketInfoService");
 
 const create_ticket = (req, res) => {
-  console.log(req.body);
   const ticket = req.body;
   if (!ticket) {
     return res.json("Invalid ticket");
