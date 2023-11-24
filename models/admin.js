@@ -8,9 +8,13 @@ const adminSchema = new Schema(
     phone: { type: String },
     email: { type: String },
     password: { type: String },
-    role: { type: String, default: "staff", enum: [role.superAdmin, role.staff] },
+    role: {
+      type: String,
+      default: "staff",
+      enum: [role.superAdmin, role.staff],
+    },
     isActive: { type: Boolean },
-    isVerfiy: { type: Boolean, default: false },
+    isVerifiy: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
