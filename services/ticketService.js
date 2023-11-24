@@ -24,9 +24,7 @@ const is_customer_can_buy_more = async (ticketType, customerId) => {
     const count = await Ticket.countDocuments(
       { customerId: customerId } && { ticketType: ticketType }
     );
-    console.log(count);
     const result = count >= 5 ? false : true;
-    console.log(result);
     return result;
   } catch (error) {
     return error;
