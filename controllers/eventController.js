@@ -6,7 +6,7 @@ const {
 } = require("../services/ticketInfoService");
 const { getTicketsByEventId } = require("../services/ticketService");
 
-const postCreateEvent = async (req, res, next) => {
+const postCreateEvent = async (req, res) => {
   try {
     const eventData = req.body.event;
     const paymentData = req.body.payment;
@@ -65,23 +65,21 @@ const deleteById = async (req, res) => {
   res.json("Successfully Delete");
 };
 
-const getEvent = async (req, res, next) => {
+const getEvent = async (req, res) => {
   const getAllEvent = await eventService.get_all_event();
   res.json(getAllEvent);
 };
 
-const getEventById = async (req, res, next) => {
+const getEventById = async (req, res) => {
   const eventId = req.params.eventId;
   const getEventById = await eventService.get_event_by_id(eventId);
   res.json(getEventById);
 };
 
-const getSortValue = async (req, res, next) => {
+const getSortValue = async (req, res) => {
   const sort = req.query.sort;
   const asc = req.query.asc;
   const events = await eventService.get_all_event();
-
-  console.log(events);
 
   if (eventService.sortFunctions[sort]) {
     console.log(sort, eventService.sortFunctions[sort]);
@@ -92,7 +90,7 @@ const getSortValue = async (req, res, next) => {
   }
 };
 
-const searchValue = async (req, res, next) => {
+const searchValue = async (req, res) => {
   const title = req.query.title;
   const searchValue = req.query.searchValue;
 
@@ -178,14 +176,14 @@ const searchValue = async (req, res, next) => {
   res.json(filterDate);
 };
 
-const bootsList = async (req, res, next) => {
+const boostsList = async (req, res) => {
   const isAsc = req.query.asc;
   const getAllEvent = await eventService.get_all_event();
 
   res.json(getAllEvent);
 };
 
-const makeBoots = async (req, res, next) => {
+const makeBoosts = async (req, res) => {
   const eventId = req.params.id;
 
   const result = await eventService.make_boots(eventId);
@@ -214,11 +212,16 @@ const getTotalAvailableTicketByEvent = async (req, res) => {
   if (totalSoldTicketByEventId.error) {
     return res.status(404).json("404 not found");
   }
-  const soldTicketCounts = {
-    Normal: 0,
-    VIP: 0,
-    VVIP: 0,
-  };
+
+  const soldTicketCounts = {};
+  ticketInfos.forEach((ticket) => {
+    const { type, quantity } = ticket;
+    if (soldTicketCounts[type]) {
+      soldTicketCounts[type] += 0;
+    } else {
+      soldTicketCounts[type] = 0;
+    }
+  });
 
   totalSoldTicketByEventId.forEach((ticket) => {
     const { type, quantity } = ticket.ticketInfo;
@@ -249,8 +252,8 @@ module.exports = {
   getEvent,
   getEventById,
   searchValue,
-  bootsList,
+  boostsList,
   deleteById,
-  makeBoots,
+  makeBoosts,
   getTotalAvailableTicketByEvent,
 };

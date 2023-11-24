@@ -2,7 +2,10 @@ const Event = require("../models/event");
 
 const get_all_event = async () => {
   try {
-    const result = await Event.find().sort({ createdAt: -1 });
+    const result = await Event.find().sort({
+      createdAt: -1,
+      trendingLevel: -1,
+    });
     return result;
   } catch (error) {
     return error;
@@ -97,7 +100,7 @@ const sortFunctions = {
       sort
     ),
 
-  eventName: (events, asc, sort) => 
+  eventName: (events, asc, sort) =>
     sortEvents_text(
       events.map((event) => event),
       asc,
@@ -143,7 +146,7 @@ const sortFunctions = {
 
 const sortEvents_text = (data, asc, sort) => {
   const sortedData = data.sort((a, b) => {
-    const nameA = a[sort]|| "";
+    const nameA = a[sort] || "";
     const nameB = b[sort] || "";
     return asc === "true"
       ? nameA.localeCompare(nameB)

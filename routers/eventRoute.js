@@ -5,9 +5,9 @@ const {
   postCreateEvent,
   getEvent,
   searchValue,
-  bootsList,
+  boostsList,
   getEventById,
-  makeBoots,
+  makeBoosts,
   getTotalAvailableTicketByEvent,
 } = require("../controllers/eventController");
 
@@ -15,10 +15,9 @@ router.get("/sort", getSortValue);
 router.get("/", getEvent);
 router.post("/create", postCreateEvent);
 router.get("/search", searchValue);
-router.get("/boots", bootsList);
-router.post("/boots/:id", makeBoots);
-router.get("/:eventId", getEventById);
-router.get("/create", () => console.log("hi"));
+router.get("/boost", boostsList);
+router.post("/boost/:id", makeBoosts);
+router.get("/find/:eventId", getEventById);
 router.get("/total-avaliable-ticket/:eventId", getTotalAvailableTicketByEvent);
 
 module.exports = router;
