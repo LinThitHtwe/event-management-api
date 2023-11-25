@@ -246,6 +246,15 @@ const getTotalAvailableTicketByEvent = async (req, res) => {
   return res.json(remainingTickets);
 };
 
+const getEventsByOrganizerId = async (req, res) => {
+  const { organizerId } = req.params;
+  const events = await eventService.get_event_by_organizer_id(organizerId);
+  if (events.error) {
+    return res.status(404).json("No Data Found");
+  }
+  return res.json(events);
+};
+
 module.exports = {
   getSortValue,
   postCreateEvent,
@@ -256,4 +265,5 @@ module.exports = {
   deleteById,
   makeBoosts,
   getTotalAvailableTicketByEvent,
+  getEventsByOrganizerId,
 };
