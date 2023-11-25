@@ -3,7 +3,10 @@ const {
   getTicketsByPaymentId,
 } = require("../services/ticketService");
 
-const { get_event_by_organizer_id } = require("../services/eventService");
+const {
+  get_event_by_organizer_id,
+  get_event_by_id,
+} = require("../services/eventService");
 const {
   get_all_ticket_info_by_event_id,
 } = require("../services/ticketInfoService");
@@ -11,7 +14,16 @@ const { get_payment_by_organizer_id } = require("../services/paymentService");
 
 const totalTicketSale = async (req, res) => {
   const organizerId = req.params.organizerId;
-  const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
+  const { event: eventId } = req.query;
+
+  const allEventsByOrganizer = [];
+  if (eventId) {
+    const event = await get_event_by_id(eventId);
+    allEventsByOrganizer.push(event);
+  } else {
+    const eventsByOrganizer = await get_event_by_organizer_id(organizerId);
+    eventsByOrganizer.forEach((event) => allEventsByOrganizer.push(event));
+  }
 
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
@@ -72,7 +84,16 @@ const totalTicketSale = async (req, res) => {
 
 const getAllOverviewData = async (req, res) => {
   const organizerId = req.params.organizerId;
-  const allEventsByOrganizer = await get_event_by_organizer_id(organizerId);
+  const { event: eventId } = req.query;
+  const allEventsByOrganizer = [];
+  if (eventId) {
+    const event = await get_event_by_id(eventId);
+    allEventsByOrganizer.push(event);
+  } else {
+    const eventsByOrganizer = await get_event_by_organizer_id(organizerId);
+    eventsByOrganizer.forEach((event) => allEventsByOrganizer.push(event));
+  }
+
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
 
