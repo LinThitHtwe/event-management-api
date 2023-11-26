@@ -1,4 +1,130 @@
+const { ref } = require("joi");
 const Event = require("../models/event");
+const mongoose = require("mongoose");
+const Organizer = require("../models/organizer");
+
+const get_events = async (
+  // name,
+  // eventStartDate = "10-12-2023",
+  // eventEndDate,
+  // ticketOpenDate = "5-11-2023",
+  // ticketCloseDate,
+  // location,
+  // organizer = "655db72a40abeabdf4678ec9"
+  name,
+  eventStartDate = "2023-12-12",
+  eventEndDate = "2023-12-18",
+  ticketOpenDate,
+  ticketCloseDate,
+  location,
+  organizerId = "655db72a40abeabdf4678ec9"
+) => {
+  try {
+    let criteria = {};
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "name",
+      name ? { $eq: name } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventStartDate",
+      eventStartDate && eventEndDate
+        ? {
+            $lte: new Date(eventEndDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventEndDate",
+      eventStartDate && eventEndDate
+        ? {
+            $gte: new Date(eventStartDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "ticketOpenDate",
+      ticketOpenDate && ticketCloseDate
+        ? {
+            $lte: new Date(ticketCloseDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "ticketCloseDate",
+      ticketOpenDate && ticketCloseDate
+        ? {
+            $gte: new Date(ticketOpenDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "location",
+      location ? { $eq: location } : null
+    );
+    // criteria = addConditionToCriteria(
+    //   criteria,
+    //   "organizer",
+    //   organizerId ? { $eq: new mongoose.Types.ObjectId(organizerId) } : null
+    // );
+
+    console.log(criteria);
+
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
+
+    // const criteria = {
+    //   $or: [
+    //     {
+    //       $or: [{ eventStartDate: { $gte: new Date(eventStartDate) } }],
+    //     },
+    //     { organizer: new mongoose.Types.ObjectId(organizerId) },
+    //   ],
+    // };
+
+    let result;
+
+    if (isCriteriaEmpty) {
+      result = await Event.find({}).sort({ trendingLevel: 1 });
+    } else {
+      result = await Event.find({
+        $and: [
+          { organizer: new mongoose.Types.ObjectId(organizerId) },
+          { $or: [criteria] },
+        ],
+      }).sort({
+        trendingLevel: -1,
+      });
+    }
+    // if (isCriteriaEmpty) {
+    //   result = await Event.find({}).sort({ trendingLevel: 1 });
+    // } else {
+    //   result = await Event.find({ $or: [criteria] }).sort({
+    //     trendingLevel: -1,
+    //   });
+    // }
+
+    result = await Event.find(criteria).sort({ trendingLevel: -1 });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const addConditionToCriteria = (criteria, key, value) => {
+  if (value) {
+    return { ...criteria, [key]: value };
+  }
+  return criteria;
+};
 
 const get_all_event = async () => {
   try {
@@ -174,6 +300,7 @@ const sortEvents_date = (data, asc, sort) => {
 };
 
 module.exports = {
+  get_events,
   get_all_event,
   get_event_by_id,
   add_event,

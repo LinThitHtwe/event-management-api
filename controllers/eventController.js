@@ -70,6 +70,11 @@ const getEvent = async (req, res) => {
   res.json(getAllEvent);
 };
 
+const getEvents = async (req, res) => {
+  const events = await eventService.get_events();
+  res.json(events);
+};
+
 const getEventById = async (req, res) => {
   const eventId = req.params.eventId;
   const getEventById = await eventService.get_event_by_id(eventId);
@@ -256,6 +261,7 @@ const getEventsByOrganizerId = async (req, res) => {
 };
 
 module.exports = {
+  getEvents,
   getSortValue,
   postCreateEvent,
   getEvent,
