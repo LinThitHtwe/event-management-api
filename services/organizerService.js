@@ -132,6 +132,60 @@ const change_email = async (organizerId, email) => {
     }
 };
 
+const filterOrganizer = (query) => {
+  const { page, pageSize, name, accountLevel, accountStatus } = query;
+  try {
+    let criteria = {};
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "name",
+      name
+    )
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "accountLevel",
+      accountLevel
+    )
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "accountStatus",
+      accountStatus
+    )
+
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
+
+    let query = {};
+
+    if (!isCriteriaEmpty) {
+      query = {
+        $and: [criteria],
+      };
+    }
+
+    const result = Organizer.find(query)
+      .skip((page-1) * pageSize)
+      .sort({accountLevel: -1})
+      .limit(pageSize);
+
+    return result;
+
+  } catch (error) {
+    return error;
+  }
+}
+
+const addConditionToCriteria = (criteria, key, value) => {
+  if (value) {
+    return { ...criteria, [key]: value };
+  }
+  return criteria;
+};
+
 module.exports = {
   create_organizer,
   get_organizers,
@@ -141,4 +195,5 @@ module.exports = {
   manage_organizer_status,
   change_phone,
   change_email,
+  filterOrganizer,
 };

@@ -1,4 +1,96 @@
+const { ref } = require("joi");
 const Event = require("../models/event");
+const mongoose = require("mongoose");
+
+const get_events = async (
+  page,
+  pageSize = 2,
+  name,
+  eventStartDate,
+  eventEndDate,
+  isUpcoming,
+  location,
+  organizerId,
+  sortBy
+) => {
+  try {
+    console.log(isUpcoming);
+
+    let criteria = {};
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "name",
+      name ? { $regex: new RegExp(`.*${name}.*`, "i") } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventStartDate",
+      eventStartDate && eventEndDate && !isUpcoming
+        ? {
+            $lte: new Date(eventEndDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventEndDate",
+      eventStartDate && eventEndDate && !isUpcoming
+        ? {
+            $gte: new Date(eventStartDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventStartDate",
+      isUpcoming ? { $gt: new Date() } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "location",
+      location ? { $eq: location } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "organizer",
+      organizerId ? new mongoose.Types.ObjectId(organizerId) : null
+    );
+
+    console.log(criteria);
+
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
+
+    let query = {};
+
+    if (!isCriteriaEmpty) {
+      query = {
+        $and: [criteria],
+      };
+    }
+
+    console.log("Query", query);
+    let result = await Event.find(query)
+      .sort(
+        sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
+      )
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const addConditionToCriteria = (criteria, key, value) => {
+  if (value) {
+    return { ...criteria, [key]: value };
+  }
+  return criteria;
+};
 
 const get_all_event = async () => {
   try {
@@ -174,6 +266,7 @@ const sortEvents_date = (data, asc, sort) => {
 };
 
 module.exports = {
+  get_events,
   get_all_event,
   get_event_by_id,
   add_event,

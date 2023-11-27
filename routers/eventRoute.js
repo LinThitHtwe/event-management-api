@@ -10,10 +10,11 @@ const {
   makeBoosts,
   getTotalAvailableTicketByEvent,
   getEventsByOrganizerId,
+  getEvents,
 } = require("../controllers/eventController");
 
 router.get("/sort", getSortValue);
-router.get("/", getEvent);
+router.get("/", getEvents);
 router.post("/create", postCreateEvent);
 router.get("/search", searchValue);
 router.get("/boost", boostsList);

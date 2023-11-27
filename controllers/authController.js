@@ -22,7 +22,7 @@ const loginForAdmin = async (req, res) => {
 const generateToken = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
   const { email } = req.body;
-  const { isValid, role } = verifyRefresh("minbhonethantes@gmail.com", refreshToken);
+  const { isValid, role } = verifyRefresh(email, refreshToken);
 
   if (!refreshToken) res.status(403).send("Invalid refresh token");
   if (!isValid || role === null) {
@@ -41,9 +41,17 @@ const generateToken = (req, res) => {
       expiresIn: "5m",
     }
   );
-  res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "None", secure: true });
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+  });
 
-  res.json({ success: true, message: "Successfully access token created", expiresIn: "5m" });
+  res.json({
+    success: true,
+    message: "Successfully access token created",
+    expiresIn: "5m",
+  });
 };
 module.exports = {
   loginForAdmin,

@@ -87,6 +87,16 @@ const change_email = async (req, res) => {
   }
 };
 
+
+const filter_organizers = async (req, res) => {
+  try {
+    const organizers = await organizerService.filterOrganizer(req.query);
+    res.send(organizers);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
   create_organizer,
   get_organizers,
@@ -96,4 +106,5 @@ module.exports = {
   manage_organizer_status,
   change_email,
   change_phone,
+  filter_organizers,
 };
