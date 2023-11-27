@@ -1,7 +1,6 @@
 const { ref } = require("joi");
 const Event = require("../models/event");
 const mongoose = require("mongoose");
-const Organizer = require("../models/organizer");
 
 const get_events = async (
   page,
@@ -9,12 +8,14 @@ const get_events = async (
   name,
   eventStartDate,
   eventEndDate,
-  ticketOpenDate,
-  ticketCloseDate,
+  isUpcoming,
   location,
-  organizerId
+  organizerId,
+  sortBy
 ) => {
   try {
+    console.log(isUpcoming);
+
     let criteria = {};
 
     criteria = addConditionToCriteria(
@@ -25,7 +26,7 @@ const get_events = async (
     criteria = addConditionToCriteria(
       criteria,
       "eventStartDate",
-      eventStartDate && eventEndDate
+      eventStartDate && eventEndDate && !isUpcoming
         ? {
             $lte: new Date(eventEndDate),
           }
@@ -34,7 +35,7 @@ const get_events = async (
     criteria = addConditionToCriteria(
       criteria,
       "eventEndDate",
-      eventStartDate && eventEndDate
+      eventStartDate && eventEndDate && !isUpcoming
         ? {
             $gte: new Date(eventStartDate),
           }
@@ -42,21 +43,8 @@ const get_events = async (
     );
     criteria = addConditionToCriteria(
       criteria,
-      "ticketOpenDate",
-      ticketOpenDate && ticketCloseDate
-        ? {
-            $lte: new Date(ticketCloseDate),
-          }
-        : null
-    );
-    criteria = addConditionToCriteria(
-      criteria,
-      "ticketCloseDate",
-      ticketOpenDate && ticketCloseDate
-        ? {
-            $gte: new Date(ticketOpenDate),
-          }
-        : null
+      "eventStartDate",
+      isUpcoming ? { $gt: new Date() } : null
     );
     criteria = addConditionToCriteria(
       criteria,
@@ -85,7 +73,9 @@ const get_events = async (
 
     console.log("Query", query);
     let result = await Event.find(query)
-      .sort({ trendingLevel: -1 })
+      .sort(
+        sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
+      )
       .skip((page - 1) * pageSize)
       .limit(pageSize);
     return result;
