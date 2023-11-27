@@ -26,13 +26,18 @@ const getAllPaymentsByOrganizerId = async (req, res) => {
 };
 
 const addOrganizerPayment = async (req, res) => {
-  const paymentData = req.body;
-  try {
-    const payment = await add_payment(paymentData);
-    return res.json(payment);
-  } catch (error) {
-    return res.json(error);
+  const paymentData = req.body.payment;
+  const response = [];
+  for (const payment of paymentData) {
+    try {
+      const addedPayment = await add_payment(payment);
+      response.push(addedPayment);
+    } catch (error) {
+      return res.json(error);
+    }
   }
+
+  return res.json(response);
 };
 
 const updateOrganizerPayment = async (req, res) => {
