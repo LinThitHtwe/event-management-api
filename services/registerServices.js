@@ -12,6 +12,7 @@ const Organizer = require("../models/organizer");
 const Role = require("../config/role");
 const { add_admin } = require("../services/adminService");
 const { create_organizer } = require("../services/organizerService");
+const { add_payment } = require("../services/paymentService");
 
 const sendEmail = async (email, subject, text) => {
   try {
@@ -100,6 +101,16 @@ const register = async (data, role, res) => {
     const userId = user._id;
 
     const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}`;
+    const paymentData = req.body.payment;
+    const response = [];
+    for (const payment of paymentData) {
+      try {
+        const addedPayment = await add_payment(payment);
+        response.push(addedPayment);
+      } catch (error) {
+        return res.json(error);
+      }
+    }
     await sendEmail(data.email, "Verify Email", send_message);
 
     return res.status(201).json({
