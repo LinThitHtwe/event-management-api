@@ -49,7 +49,7 @@ const get_events = async (
     criteria = addConditionToCriteria(
       criteria,
       "location",
-      location ? { $eq: location } : null
+      location ? { $regex: new RegExp(`.*${location}.*`, "i") } : null
     );
     criteria = addConditionToCriteria(
       criteria,
