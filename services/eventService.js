@@ -1,4 +1,106 @@
+const { ref } = require("joi");
 const Event = require("../models/event");
+const mongoose = require("mongoose");
+const Organizer = require("../models/organizer");
+
+const get_events = async (
+  page,
+  pageSize = 2,
+  name,
+  eventStartDate,
+  eventEndDate,
+  ticketOpenDate,
+  ticketCloseDate,
+  location,
+  organizerId
+) => {
+  try {
+    let criteria = {};
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "name",
+      name ? { $regex: new RegExp(`.*${name}.*`, "i") } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventStartDate",
+      eventStartDate && eventEndDate
+        ? {
+            $lte: new Date(eventEndDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "eventEndDate",
+      eventStartDate && eventEndDate
+        ? {
+            $gte: new Date(eventStartDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "ticketOpenDate",
+      ticketOpenDate && ticketCloseDate
+        ? {
+            $lte: new Date(ticketCloseDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "ticketCloseDate",
+      ticketOpenDate && ticketCloseDate
+        ? {
+            $gte: new Date(ticketOpenDate),
+          }
+        : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "location",
+      location ? { $eq: location } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "organizer",
+      organizerId ? new mongoose.Types.ObjectId(organizerId) : null
+    );
+
+    console.log(criteria);
+
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
+
+    let query = {};
+
+    if (!isCriteriaEmpty) {
+      query = {
+        $and: [criteria],
+      };
+    }
+
+    console.log("Query", query);
+    let result = await Event.find(query)
+      .sort({ trendingLevel: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const addConditionToCriteria = (criteria, key, value) => {
+  if (value) {
+    return { ...criteria, [key]: value };
+  }
+  return criteria;
+};
 
 const get_all_event = async () => {
   try {
@@ -174,6 +276,7 @@ const sortEvents_date = (data, asc, sort) => {
 };
 
 module.exports = {
+  get_events,
   get_all_event,
   get_event_by_id,
   add_event,
