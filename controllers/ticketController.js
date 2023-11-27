@@ -44,7 +44,7 @@ const get_tickets = async (req, res) => {
 
 const get_filtered_tickets = async (req, res) => {
   const result = await filter_tickets(req.query);
-  res.json(result);
+  result == [] ? res.json(result) : res.json({ error: 'Not found', message: 'resource with following criteria not found' });
 }
 
 module.exports = {
