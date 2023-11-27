@@ -38,10 +38,24 @@ const add_payment = async (paymentData) => {
     return error;
   }
 };
+const update_payment = async (paymentId, PaymentData) => {
+  try {
+    const payment = Payment.findOneAndUpdate(paymentId, PaymentData);
+
+    if (!payment) {
+      throw "Payment No Found";
+    }
+
+    return payment;
+  } catch (error) {
+    return { error: error };
+  }
+};
 
 module.exports = {
   get_all_payment,
   get_payment_by_id,
   add_payment,
   get_payment_by_organizer_id,
+  update_payment,
 };
