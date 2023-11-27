@@ -25,7 +25,7 @@ const get_payment_by_organizer_id = async (organizerId) => {
     );
     return result;
   } catch (error) {
-    return error;
+    return { error: error };
   }
 };
 
