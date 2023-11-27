@@ -40,7 +40,10 @@ const add_payment = async (paymentData) => {
 };
 const update_payment = async (paymentId, PaymentData) => {
   try {
-    const payment = Payment.findOneAndUpdate(paymentId, PaymentData);
+    const payment = await Payment.findOneAndUpdate(
+      { _id: paymentId },
+      PaymentData
+    );
 
     if (!payment) {
       throw "Payment No Found";

@@ -45,6 +45,9 @@ const updateOrganizerPayment = async (req, res) => {
   const paymentData = req.body;
   try {
     const payment = await update_payment(paymentId, paymentData);
+    if (payment.error) {
+      return res.status(400).json(payment.error);
+    }
     res.json(payment);
   } catch (error) {
     res.status(400).send(error);
