@@ -1,4 +1,8 @@
-const { get_payment_by_organizer_id } = require("../services/paymentService");
+const {
+  get_payment_by_organizer_id,
+  update_payment,
+  add_payment,
+} = require("../services/paymentService");
 
 const messages = {
   notFound: "No Data Found",
@@ -21,6 +25,29 @@ const getAllPaymentsByOrganizerId = async (req, res) => {
   }
 };
 
+const addOrganizerPayment = async (req, res) => {
+  const paymentData = req.body;
+  try {
+    const payment = await add_payment(paymentData);
+    return res.json(payment);
+  } catch (error) {
+    return res.json(error);
+  }
+};
+
+const updateOrganizerPayment = async (req, res) => {
+  const { paymentId } = req.params;
+  const paymentData = req.body;
+  try {
+    const payment = await update_payment(paymentId, paymentData);
+    res.json(payment);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   getAllPaymentsByOrganizerId,
+  updateOrganizerPayment,
+  addOrganizerPayment,
 };
