@@ -74,6 +74,39 @@ const getTicketsByTicketInfoId = async (ticketInfoId) => {
   }
 };
 
+const filter_tickets = async (query) => {
+  try {
+    let { filter, sort } = {};
+
+    filter = (query.search)?
+      {
+        $or: [
+          { 'customer.name': { $regex: query.search, $options: 'i' } },
+          { 'event.name': { $regex: query.search, $options: 'i' } },
+        ],
+      } : '';
+
+    sort[query.sortBy] = (query.sortBy == 'asc')? '1' : '-1';
+
+    filter.createdAt = (query.createdAt)? { $gte: new Date(query.date) } : '';
+
+    filter.event = (query.event)? mongoose.Types.ObjectId(query.event) : '';
+
+    const result = await Ticket.find(filter)
+      .populate('customer', 'name')
+      .populate('ticketInfo')
+      .populate('payment')
+      .populate('event')
+      .sort(sort)
+      .exec();
+
+    return result;
+  } catch (error) {
+    console.error('Error filtering tickets:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   get_all_ticket,
   get_ticket_by_id,
@@ -82,4 +115,5 @@ module.exports = {
   getTicketsByEventId,
   getTicketsByTicketInfoId,
   getTicketsByPaymentId,
+  filter_tickets,
 };
