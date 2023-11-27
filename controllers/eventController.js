@@ -1,3 +1,4 @@
+const { boolean } = require("joi");
 const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
 const {
@@ -52,6 +53,32 @@ const deleteById = async (req, res) => {
 const getEvent = async (req, res) => {
   const getAllEvent = await eventService.get_all_event();
   res.json(getAllEvent);
+};
+
+const getEvents = async (req, res) => {
+  const {
+    page,
+    pageSize,
+    name,
+    eventStartDate,
+    eventEndDate,
+    isUpcoming,
+    location,
+    organizerId,
+    sortBy,
+  } = req.query;
+  const events = await eventService.get_events(
+    page,
+    pageSize,
+    name,
+    eventStartDate,
+    eventEndDate,
+    isUpcoming === "true" ? true : false,
+    location,
+    organizerId,
+    sortBy
+  );
+  res.json(events);
 };
 
 const getEventById = async (req, res) => {
@@ -240,6 +267,7 @@ const getEventsByOrganizerId = async (req, res) => {
 };
 
 module.exports = {
+  getEvents,
   getSortValue,
   postCreateEvent,
   getEvent,

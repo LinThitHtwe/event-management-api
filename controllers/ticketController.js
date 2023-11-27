@@ -3,6 +3,7 @@ const {
   is_customer_can_buy_more,
   add_ticket,
   get_all_ticket,
+  filter_tickets,
 } = require("../services/ticketService");
 const {
   get_all_ticket_info_by_event_id,
@@ -41,7 +42,13 @@ const get_tickets = async (req, res) => {
   res.json(result);
 };
 
+const get_filtered_tickets = async (req, res) => {
+  const result = await filter_tickets(req.query);
+  result == [] ? res.json(result) : res.json({ error: 'Not found', message: 'resource with following criteria not found' });
+}
+
 module.exports = {
   create_ticket,
   get_tickets,
+  get_filtered_tickets,
 };

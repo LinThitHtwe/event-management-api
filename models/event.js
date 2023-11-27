@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 const eventSchema = new Schema(
   {
     name: { type: String },
-    eventStartDate: { type: String },
-    eventEndDate: { type: String },
-    ticketOpenDate: { type: String },
-    ticketCloseDate: { type: String },
+    eventStartDate: { type: Date },
+    eventEndDate: { type: Date },
+    ticketOpenDate: { type: Date },
+    ticketCloseDate: { type: Date },
     contact: { type: String },
     location: { type: String },
     thumbnail: { type: String },
