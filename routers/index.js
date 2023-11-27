@@ -8,6 +8,8 @@ const upgradePaymentRoutes = require("./upgradePaymentRoutes");
 const organizerInvoiceRoutes = require("./organizerInvoiceRoutes");
 const organizerDashboardRoutes = require("./organizerDashboardRoutes");
 const ticketRoutes = require("./ticketRoutes");
+const Role = require("../config/role");
+const permissionByRole = require("../middleware/rolePermission");
 
 router.get("/user", () => console.log("using user"));
 router.use("/auth", authRouter);

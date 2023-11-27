@@ -1,12 +1,15 @@
 const jwt = require("jsonwebtoken");
-const permissionByRole = (role) => {
+
+const permissionByRole = (...roles) => {
   return (req, res, next) => {
     try {
       const token = req.cookies.accessToken;
-      if (!token) return res.status(403).send("Access denied.");
+      if (!token) return res.status(403).send("Role Denied.");
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      userRole = decoded.UserInfo.role;
-      if (userRole === role) {
+      const userRole = decoded.UserInfo.role;
+
+      if (roles.includes(userRole)) {
         next();
       } else {
         res.status(403).send("Access denied.");
@@ -16,4 +19,5 @@ const permissionByRole = (role) => {
     }
   };
 };
+
 module.exports = permissionByRole;

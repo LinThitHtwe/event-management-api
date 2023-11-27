@@ -12,7 +12,7 @@ const messages = {
   loginError: "Oops! Something went wrong.",
 };
 
-const login = async (data, role, res) => {
+const login = async (data, role, res, req) => {
   try {
     const schema = await loginSchema.validateAsync(data);
     const { email, password } = data;
@@ -44,6 +44,7 @@ const login = async (data, role, res) => {
       const accessToken = jwt.sign(
         {
           UserInfo: {
+            id: foundUser.id,
             email: foundUser.email,
             role: foundUser.role,
           },
@@ -54,7 +55,7 @@ const login = async (data, role, res) => {
         }
       );
       const refreshToken = jwt.sign(
-        { email: foundUser.email, role: foundUser.role },
+        { email: foundUser.email, id: foundUser.id, role: foundUser.role },
         process.env.JWT_SECRET,
         {
           expiresIn: "1d",
@@ -69,8 +70,9 @@ const login = async (data, role, res) => {
       res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "None", secure: true });
 
       const result = {
-        role: foundUser.role,
-        email: foundUser.email,
+        user: {
+          ...foundUser._doc,
+        },
         accessToken: `Bearer ${accessToken}`,
         refreshToken: refreshToken,
         expiresIn: "30s",

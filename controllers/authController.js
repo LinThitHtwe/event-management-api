@@ -14,7 +14,7 @@ const signupForVerification = async (req, res) => {
   await verification(req, res);
 };
 const loginForOrganzier = async (req, res) => {
-  await login(req.body, Role.organzier, res);
+  await login(req.body, Role.organzier, res, req);
 };
 const loginForAdmin = async (req, res) => {
   await login(req.body, Role.staff, res);
