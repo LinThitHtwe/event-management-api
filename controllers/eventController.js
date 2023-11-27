@@ -71,7 +71,28 @@ const getEvent = async (req, res) => {
 };
 
 const getEvents = async (req, res) => {
-  const events = await eventService.get_events();
+  const {
+    page,
+    pageSize,
+    name,
+    eventStartDate,
+    eventEndDate,
+    ticketOpenDate,
+    ticketCloseDate,
+    location,
+    organizerId,
+  } = req.query;
+  const events = await eventService.get_events(
+    page,
+    pageSize,
+    name,
+    eventStartDate,
+    eventEndDate,
+    ticketOpenDate,
+    ticketCloseDate,
+    location,
+    organizerId
+  );
   res.json(events);
 };
 

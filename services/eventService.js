@@ -4,20 +4,15 @@ const mongoose = require("mongoose");
 const Organizer = require("../models/organizer");
 
 const get_events = async (
-  // name,
-  // eventStartDate = "10-12-2023",
-  // eventEndDate,
-  // ticketOpenDate = "5-11-2023",
-  // ticketCloseDate,
-  // location,
-  // organizer = "655db72a40abeabdf4678ec9"
+  page,
+  pageSize = 2,
   name,
-  eventStartDate = "2023-12-12",
-  eventEndDate = "2023-12-18",
+  eventStartDate,
+  eventEndDate,
   ticketOpenDate,
   ticketCloseDate,
   location,
-  organizerId = "655db72a40abeabdf4678ec9"
+  organizerId
 ) => {
   try {
     let criteria = {};
@@ -25,7 +20,7 @@ const get_events = async (
     criteria = addConditionToCriteria(
       criteria,
       "name",
-      name ? { $eq: name } : null
+      name ? { $regex: new RegExp(`.*${name}.*`, "i") } : null
     );
     criteria = addConditionToCriteria(
       criteria,
@@ -68,11 +63,11 @@ const get_events = async (
       "location",
       location ? { $eq: location } : null
     );
-    // criteria = addConditionToCriteria(
-    //   criteria,
-    //   "organizer",
-    //   organizerId ? { $eq: new mongoose.Types.ObjectId(organizerId) } : null
-    // );
+    criteria = addConditionToCriteria(
+      criteria,
+      "organizer",
+      organizerId ? new mongoose.Types.ObjectId(organizerId) : null
+    );
 
     console.log(criteria);
 
@@ -80,38 +75,19 @@ const get_events = async (
       (value) => value === ""
     );
 
-    // const criteria = {
-    //   $or: [
-    //     {
-    //       $or: [{ eventStartDate: { $gte: new Date(eventStartDate) } }],
-    //     },
-    //     { organizer: new mongoose.Types.ObjectId(organizerId) },
-    //   ],
-    // };
+    let query = {};
 
-    let result;
-
-    if (isCriteriaEmpty) {
-      result = await Event.find({}).sort({ trendingLevel: 1 });
-    } else {
-      result = await Event.find({
-        $and: [
-          { organizer: new mongoose.Types.ObjectId(organizerId) },
-          { $or: [criteria] },
-        ],
-      }).sort({
-        trendingLevel: -1,
-      });
+    if (!isCriteriaEmpty) {
+      query = {
+        $and: [criteria],
+      };
     }
-    // if (isCriteriaEmpty) {
-    //   result = await Event.find({}).sort({ trendingLevel: 1 });
-    // } else {
-    //   result = await Event.find({ $or: [criteria] }).sort({
-    //     trendingLevel: -1,
-    //   });
-    // }
 
-    result = await Event.find(criteria).sort({ trendingLevel: -1 });
+    console.log("Query", query);
+    let result = await Event.find(query)
+      .sort({ trendingLevel: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
     return result;
   } catch (error) {
     console.log(error);
