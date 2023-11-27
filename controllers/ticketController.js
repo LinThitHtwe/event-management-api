@@ -43,7 +43,7 @@ const get_tickets = async (req, res) => {
 };
 
 const get_filtered_tickets = async (req, res) => {
-  const result = await filter_tickets();
+  const result = await filter_tickets(req.query);
   res.json(result);
 }
 
