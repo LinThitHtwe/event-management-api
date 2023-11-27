@@ -101,11 +101,15 @@ const register = async (data, role, res) => {
     const userId = user._id;
 
     const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}`;
-    const paymentData = req.body.payment;
+    const paymentData = data.payment;
     const response = [];
     for (const payment of paymentData) {
       try {
-        const addedPayment = await add_payment(payment);
+        const addedPayment = await add_payment({
+          ...payment,
+          organizer: userId,
+        });
+
         response.push(addedPayment);
       } catch (error) {
         return res.json(error);
@@ -142,4 +146,4 @@ const verification = async (req, res) => {
   }
 };
 
-module.exports = { register, verification };
+module.exports = { register, verification, sendEmail };
