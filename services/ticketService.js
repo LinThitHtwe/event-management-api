@@ -1,4 +1,5 @@
 const Ticket = require("../models/ticket");
+const mongoose = require("mongoose");
 
 const get_all_ticket = async () => {
   try {
@@ -87,10 +88,16 @@ const getTicketsByTicketInfoId = async (ticketInfoId) => {
   // organizerId
 
 const filter_tickets = async (query) => {
-  let { page, pageSize, sort, order, startDate, endDate , customerName, eventName, paymentType, ticketType } = query;
+  let { organizerId, page, pageSize, sort, order, startDate, endDate , customerName, eventName, paymentType, ticketType } = query;
   try {
     let criteria = {};
     let sortBy = sort && order ? { [sort] : parseInt(order) } : { createdAt: -1 };
+
+    // criteria = addConditionToCriteria(
+    //   criteria,
+    //   "organizer",
+    //   organizerId ? new mongoose.Types.ObjectId(organizerId) : null
+    // );
 
     criteria = addConditionToCriteria(
       criteria,
@@ -145,20 +152,22 @@ const filter_tickets = async (query) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize);
       let filterObj = {
+        organizerId: organizerId || undefined,
         customerName: customerName || undefined,
         eventName: eventName || undefined,
         paymentType: paymentType || undefined,
         ticketType: ticketType || undefined,
       };
-      
       let filteredResult = results.filter((result) => {
         return (
-          (!filterObj.customerName || result.customer.name === filterObj.customerName) &&
-          (!filterObj.eventName || result.event.name === filterObj.eventName) &&
+          (!filterObj.customerName || (result.customer && result.customer.name === filterObj.customerName)) &&
+          (!filterObj.eventName || (result.event && result.event.name === filterObj.eventName)) &&
           (!filterObj.paymentType || (result.payment && result.payment.name === filterObj.paymentType)) &&
+          (!filterObj.organizerId || (result.payment && result.payment.organizer.toString() === filterObj.organizerId)) &&
           (!filterObj.ticketType || (result.ticketInfo && result.ticketInfo.type === filterObj.ticketType))
         );
-      });
+      });      
+
     return filteredResult;
   } catch (error) {
     console.log(error);
