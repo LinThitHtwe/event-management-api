@@ -9,7 +9,7 @@ const organizerSchema = new Schema(
     password: { type: String },
     companyName: { type: String },
     contact: { type: String },
-    accountLevel: { type: Number },
+    accountLevel: { type: String },
     accountStatus: { type: String },
     bio: { type: String },
     role: { type: String, default: role.organzier },

@@ -1,7 +1,8 @@
 const customerService = require("../services/customerService");
+
 const getAllCustomers = async (req, res) => {
   try {
-    const customers = await customerService.get_all_customer;
+    const customers = await customerService.get_all_customer();
     res.json(customers);
   } catch (error) {
     console.error(error);

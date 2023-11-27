@@ -1,12 +1,25 @@
 const router = require("express").Router();
 
-const eventController = require("../controllers/eventController");
+const {
+  getSortValue,
+  postCreateEvent,
+  getEvent,
+  searchValue,
+  boostsList,
+  getEventById,
+  makeBoosts,
+  getTotalAvailableTicketByEvent,
+  getEventsByOrganizerId,
+} = require("../controllers/eventController");
 
-router.get("/sort", eventController.getSortValue);
-router.get("/", eventController.getEvent);
-router.get("/search", eventController.searchValue);
-router.get("/boots", eventController.bootsList);
-router.get("/:eventId", eventController.getEventById);
-router.get("/create", () => console.log("hi")); //make to get organizer id, createby and trending with bluemark
+router.get("/sort", getSortValue);
+router.get("/", getEvent);
+router.post("/create", postCreateEvent);
+router.get("/search", searchValue);
+router.get("/boost", boostsList);
+router.post("/boost/:id", makeBoosts);
+router.get("/find/:eventId", getEventById);
+router.get("/total-avaliable-ticket/:eventId", getTotalAvailableTicketByEvent);
+router.get("/events-by-organizer/:organizerId", getEventsByOrganizerId);
 
 module.exports = router;
