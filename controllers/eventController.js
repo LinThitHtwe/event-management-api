@@ -11,24 +11,8 @@ const postCreateEvent = async (req, res) => {
     const eventData = req.body.event;
     const paymentData = req.body.payment;
     const { tickets } = req.body;
-    console.log(req.body);
-    eventData.trendingLevel = eventData.trendingLevel || "0";
-    eventData.createdBy = eventData.createdBy || "DefaultCreator";
-    paymentData.organizer = paymentData.organizer || "1";
-
-    eventData.eventStartDate = eventService.format_ui_date_to_db_date(
-      eventData.eventStartDate
-    );
-    eventData.eventEndDate = eventService.format_ui_date_to_db_date(
-      eventData.eventEndDate
-    );
-    eventData.ticketOpenDate = eventService.format_ui_date_to_db_date(
-      eventData.ticketOpenDate
-    );
-    eventData.ticketCloseDate = eventService.format_ui_date_to_db_date(
-      eventData.ticketCloseDate
-    );
-
+    console.log(eventData);
+    console.log(tickets);
     const createdEvent = await eventService.add_event(eventData);
     const createdPayment = await paymentSevice.add_payment(paymentData);
 
@@ -52,7 +36,7 @@ const postCreateEvent = async (req, res) => {
     const createdTicketInfo = await Promise.all(createdTicketInfoPromises);
 
     const resData = { createdEvent, createdPayment, createdTicketInfo };
-    res.json(resData);
+    res.json("Success");
   } catch (error) {
     console.error("Error in postCreateEvent:", error);
     res.status(500).json({ error: "Internal Server Error" });
