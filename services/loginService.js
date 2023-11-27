@@ -12,7 +12,7 @@ const messages = {
   loginError: "Oops! Something went wrong.",
 };
 
-const login = async (data, role, res) => {
+const login = async (data, role, res, req) => {
   try {
     const schema = await loginSchema.validateAsync(data);
     const { email, password } = data;
@@ -41,22 +41,26 @@ const login = async (data, role, res) => {
 
     const match = await bcrypt.compare(password, foundUser.password);
     if (match) {
-      const role = Object.values(foundUser.role);
       const accessToken = jwt.sign(
         {
           UserInfo: {
+            id: foundUser.id,
             email: foundUser.email,
-            role: role,
+            role: foundUser.role,
           },
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30s",
+          expiresIn: "5m",
         }
       );
-      const refreshToken = jwt.sign({ email: foundUser.email }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-      });
+      const refreshToken = jwt.sign(
+        { email: foundUser.email, id: foundUser.id, role: foundUser.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "None",
@@ -66,8 +70,9 @@ const login = async (data, role, res) => {
       res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "None", secure: true });
 
       const result = {
-        role: foundUser.role,
-        email: foundUser.email,
+        user: {
+          ...foundUser._doc,
+        },
         accessToken: `Bearer ${accessToken}`,
         refreshToken: refreshToken,
         expiresIn: "30s",
