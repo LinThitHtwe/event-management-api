@@ -2,7 +2,8 @@ const Ticket = require("../models/ticket");
 
 const get_all_ticket = async () => {
   try {
-    const result = await Ticket.find().sort({ createdAt: -1 });
+    const result = await Ticket.find().sort({ createdAt: -1 })
+      .populate("customer ticketInfo event payment");
     console.log(result);
     return result;
   } catch (error) {
@@ -74,6 +75,104 @@ const getTicketsByTicketInfoId = async (ticketInfoId) => {
   }
 };
 
+  // page,
+  // pageSize = 2,
+  // sort,
+  // customerName,
+  // startDate,
+  // endDate,
+  // ticketType,
+  // paymentType,
+  // eventId,
+  // organizerId
+
+const filter_tickets = async (query) => {
+  let { page, pageSize, sort, order, startDate, endDate , customerName, eventName, paymentType, ticketType } = query;
+  try {
+    let criteria = {};
+    let sortBy = sort && order ? { [sort] : parseInt(order) } : { createdAt: -1 };
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "createdAt",
+      startDate && endDate
+        ? {
+            $lte: new Date(startDate),
+            $gte: new Date(endDate),
+          }
+        : null
+    );
+        
+    // criteria = addConditionToCriteria(
+    //   criteria,
+    //   "customer.name",
+    //   customerName ? customerName : null
+    // )
+
+    // criteria = addConditionToCriteria(
+    //   criteria,
+    //   "event.name",
+    //   eventName ? eventName : null
+    // )
+
+    // criteria = addConditionToCriteria(
+    //   criteria,
+    //   "payment.name",
+    //   paymentType ? paymentType : null
+    // )
+
+    // criteria = addConditionToCriteria(
+    //   criteria,
+    //   "ticketInfo.type",
+    //   ticketType ? ticketType : null
+    // )
+
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
+
+    let query = {};
+
+    if (!isCriteriaEmpty) {
+      query = {
+        $and: [criteria],
+      };
+    }
+    
+    let results = await Ticket.find(query)
+      .populate("customer ticketInfo event payment")
+      .sort(sortBy)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+      let filterObj = {
+        customerName: customerName || undefined,
+        eventName: eventName || undefined,
+        paymentType: paymentType || undefined,
+        ticketType: ticketType || undefined,
+      };
+      
+      let filteredResult = results.filter((result) => {
+        return (
+          (!filterObj.customerName || result.customer.name === filterObj.customerName) &&
+          (!filterObj.eventName || result.event.name === filterObj.eventName) &&
+          (!filterObj.paymentType || (result.payment && result.payment.name === filterObj.paymentType)) &&
+          (!filterObj.ticketType || (result.ticketInfo && result.ticketInfo.type === filterObj.ticketType))
+        );
+      });
+    return filteredResult;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const addConditionToCriteria = (criteria, key, value) => {
+  if (value) {
+    return { ...criteria, [key]: value };
+  }
+  return criteria;
+};
+
 module.exports = {
   get_all_ticket,
   get_ticket_by_id,
@@ -82,4 +181,5 @@ module.exports = {
   getTicketsByEventId,
   getTicketsByTicketInfoId,
   getTicketsByPaymentId,
+  filter_tickets
 };
