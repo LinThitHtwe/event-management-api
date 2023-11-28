@@ -93,12 +93,6 @@ const filter_tickets = async (query) => {
     let criteria = {};
     let sortBy = sort && order ? { [sort] : parseInt(order) } : { createdAt: -1 };
 
-    // criteria = addConditionToCriteria(
-    //   criteria,
-    //   "organizer",
-    //   organizerId ? new mongoose.Types.ObjectId(organizerId) : null
-    // );
-
     criteria = addConditionToCriteria(
       criteria,
       "createdAt",
@@ -109,30 +103,6 @@ const filter_tickets = async (query) => {
           }
         : null
     );
-        
-    // criteria = addConditionToCriteria(
-    //   criteria,
-    //   "customer.name",
-    //   customerName ? customerName : null
-    // )
-
-    // criteria = addConditionToCriteria(
-    //   criteria,
-    //   "event.name",
-    //   eventName ? eventName : null
-    // )
-
-    // criteria = addConditionToCriteria(
-    //   criteria,
-    //   "payment.name",
-    //   paymentType ? paymentType : null
-    // )
-
-    // criteria = addConditionToCriteria(
-    //   criteria,
-    //   "ticketInfo.type",
-    //   ticketType ? ticketType : null
-    // )
 
     const isCriteriaEmpty = Object.values(criteria).every(
       (value) => value === ""
@@ -145,12 +115,13 @@ const filter_tickets = async (query) => {
         $and: [criteria],
       };
     }
-    
+
     let results = await Ticket.find(query)
       .populate("customer ticketInfo event payment")
       .sort(sortBy)
       .skip((page - 1) * pageSize)
       .limit(pageSize);
+      
       let filterObj = {
         organizerId: organizerId || undefined,
         customerName: customerName || undefined,
