@@ -11,9 +11,8 @@ const postCreateEvent = async (req, res) => {
   try {
     const eventData = req.body.event;
     const paymentData = req.body.payment;
-    const { tickets } = req.body;
+    const tickets = req.body.event.tickets;
     console.log(eventData);
-    console.log(tickets);
     const createdEvent = await eventService.add_event(eventData);
     const createdPayment = await paymentSevice.add_payment(paymentData);
 
