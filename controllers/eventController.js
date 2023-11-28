@@ -11,7 +11,7 @@ const postCreateEvent = async (req, res) => {
   try {
     const eventData = req.body.event;
     const paymentData = req.body.payment;
-    const {tickets} = req.body.event;
+    const { tickets } = req.body.event;
     const createdEvent = await eventService.add_event(eventData);
 
     console.log(eventData);
@@ -249,12 +249,14 @@ const getTotalAvailableTicketByEvent = async (req, res) => {
       if (soldTicketCounts[type]) {
         const remainingCount = totalTicketCounts[type] - soldTicketCounts[type];
         remainingTicketInfo = {
+          _id: ticketInfo._id,
           type,
           price: ticketInfo.price,
           totalAvailableTickets: remainingCount,
         };
       } else {
         remainingTicketInfo = {
+          _id: ticketInfo._id,
           type,
           price: ticketInfo.price,
           totalAvailableTickets: totalTicketCounts[type],
