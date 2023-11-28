@@ -1,5 +1,5 @@
 const customerService = require("../services/customerService");
-
+const { add_ticket } = require("../services/ticketService");
 const getAllCustomers = async (req, res) => {
   try {
     const customers = await customerService.get_all_customer();
@@ -18,12 +18,33 @@ const getCustomerById = async (req, res) => {
   }
 };
 const addCustomer = async (req, res) => {
+  let customer; // Declare customer variable outside try block for later use in catch block
   try {
-    const addCustomer = req.body;
-    const customer = await customerService.add_customer(addCustomer);
-    res.json(customer);
+    const { customer: addCustomer, tickets } = req.body;
+    customer = await customerService.add_customer(addCustomer);
+
+    const boughtTickets = tickets.map((ticket) => ({
+      ...ticket,
+      customer: customer._id,
+    }));
+    const response = [];
+
+    for (const boughtTicket of boughtTickets) {
+      try {
+        const addedTicket = await add_ticket(boughtTicket);
+        response.push(addedTicket);
+      } catch (error) {
+        await customerService.remove_customer(customer._id);
+        return res
+          .status(500)
+          .json({ error: "Ticket addition failed. Rollback performed." });
+      }
+    }
+
+    res.json(response);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
