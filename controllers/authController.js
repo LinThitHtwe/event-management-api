@@ -1,9 +1,48 @@
-const { register, verification } = require("../services/registerServices");
+const { register, verification, sendEmail } = require("../services/registerServices");
 require("dotenv").config();
 const { login } = require("../services/loginService");
 const Role = require("../config/role");
 const jwt = require("jsonwebtoken");
+const speakeasy = require("@levminer/speakeasy");
 const { verifyRefresh } = require("../helper");
+
+let secret = speakeasy.generateSecret({ length: 20 });
+const otpGenerate = async (req, res) => {
+  const { email } = req.body;
+  let currentTime = Math.floor(Date.now() / 1000);
+  let decoded;
+  if (!email) {
+    const token = req.cookies.accessToken;
+    if (!token) return res.status(403).send("Email Access Denied. Please login again.");
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  }
+
+  const tokenValidDuration = 30;
+
+  let expirationTime = currentTime + tokenValidDuration;
+  let expirationTimeString = new Date(expirationTime * 1000).toLocaleTimeString();
+  // Generate the OTP
+  const code = speakeasy.totp({
+    secret: secret.base32,
+    encoding: "base32",
+    time: currentTime,
+  });
+  const sendMessage = `Your OTP is: ${code}, Expires in: ${expirationTimeString}, Valid for: 30s`;
+  await sendEmail(decoded?.UserInfo?.email || email, "Verify your OTP", sendMessage);
+
+  res.json({ code, expiresIn: expirationTimeString, durations: "30s" });
+};
+
+const verifyOtp = async (req, res) => {
+  const { code } = req.body;
+  const tokenValidates = speakeasy.totp.verify({
+    secret: secret.base32,
+    encoding: "base32",
+    token: code,
+    time: Math.floor(Date.now() / 1000),
+  });
+  res.json({ tokenValidates });
+};
 const signupForStaff = async (req, res) => {
   await register(req.body, Role.staff, res);
 };
@@ -21,7 +60,9 @@ const loginForAdmin = async (req, res) => {
 };
 const generateToken = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  const { email } = req.body;
+  if (!refreshToken) return res.status(403).send("Access denied.");
+  const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  const email = decoded.email;
   const { isValid, role } = verifyRefresh(email, refreshToken);
 
   if (!refreshToken) res.status(403).send("Invalid refresh token");
@@ -54,6 +95,8 @@ const generateToken = (req, res) => {
   });
 };
 module.exports = {
+  verifyOtp,
+  otpGenerate,
   loginForAdmin,
   generateToken,
   loginForOrganzier,

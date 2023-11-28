@@ -31,6 +31,13 @@ const organizerSchema = Joi.object({
   contact: Joi.string(),
   accountLevel: Joi.number(),
   bio: Joi.string(),
+  payment: Joi.array().items(
+    Joi.object({
+      name: Joi.string().required(),
+      phone: Joi.string().required(),
+      organizer: Joi.number(),
+    })
+  ),
 });
 
 const loginSchema = Joi.object({
