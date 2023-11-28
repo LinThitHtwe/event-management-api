@@ -244,19 +244,26 @@ const getTotalAvailableTicketByEvent = async (req, res) => {
   });
 
   const remainingTickets = {};
-
   for (const type in totalTicketCounts) {
-    if (soldTicketCounts[type]) {
-      const remainingCount = totalTicketCounts[type] - soldTicketCounts[type];
-      remainingTickets[type] = remainingCount;
-    } else {
-      remainingTickets[type] = totalTicketCounts[type];
+    const ticketInfo = ticketInfos.find((ticket) => ticket.type === type);
+
+    if (ticketInfo) {
+      if (soldTicketCounts[type]) {
+        const remainingCount = totalTicketCounts[type] - soldTicketCounts[type];
+        remainingTickets[type] = {
+          price: ticketInfo.price,
+          totalAvailableTickets: remainingCount,
+        };
+      } else {
+        remainingTickets[type] = {
+          price: ticketInfo.price,
+          totalAvailableTickets: totalTicketCounts[type],
+        };
+      }
     }
   }
-
   return res.json(remainingTickets);
 };
-
 const getEventsByOrganizerId = async (req, res) => {
   const { organizerId } = req.params;
   const events = await eventService.get_event_by_organizer_id(organizerId);
