@@ -11,14 +11,13 @@ const postCreateEvent = async (req, res) => {
   try {
     const eventData = req.body.event;
     const paymentData = req.body.payment;
-    const tickets = req.body.event.tickets;
-    console.log(eventData);
+    const {tickets} = req.body.event;
     const createdEvent = await eventService.add_event(eventData);
-    const createdPayment = await paymentSevice.add_payment(paymentData);
 
+    console.log(eventData);
     const createdTicketInfoPromises = tickets.map(async (tic) => {
-      const eventId = createdEvent._id;
-      const ticket = { ...tic, eventId };
+      const event = createdEvent._id;
+      const ticket = { ...tic, event };
       try {
         const ticketInfo = await add_ticket_info(ticket);
         if (!ticketInfo) {
@@ -35,7 +34,6 @@ const postCreateEvent = async (req, res) => {
 
     const createdTicketInfo = await Promise.all(createdTicketInfoPromises);
 
-    const resData = { createdEvent, createdPayment, createdTicketInfo };
     res.json("Success");
   } catch (error) {
     console.error("Error in postCreateEvent:", error);
