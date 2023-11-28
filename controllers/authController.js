@@ -8,11 +8,14 @@ const { verifyRefresh } = require("../helper");
 
 let secret = speakeasy.generateSecret({ length: 20 });
 const otpGenerate = async (req, res) => {
+  const { email } = req.body;
   let currentTime = Math.floor(Date.now() / 1000);
-  const token = req.cookies.accessToken;
-
-  if (!token) return res.status(403).send("Access denied.");
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  let decoded;
+  if (!email) {
+    const token = req.cookies.accessToken;
+    if (!token) return res.status(403).send("Email Access Denied. Please login again.");
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  }
 
   const tokenValidDuration = 30;
 
@@ -25,7 +28,7 @@ const otpGenerate = async (req, res) => {
     time: currentTime,
   });
   const sendMessage = `Your OTP is: ${code}, Expires in: ${expirationTimeString}, Valid for: 30s`;
-  await sendEmail(decoded.UserInfo.email, "Verify your OTP", sendMessage);
+  await sendEmail(decoded?.UserInfo?.email || email, "Verify your OTP", sendMessage);
 
   res.json({ code, expiresIn: expirationTimeString, durations: "30s" });
 };
@@ -57,7 +60,9 @@ const loginForAdmin = async (req, res) => {
 };
 const generateToken = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  const { email } = req.body;
+  if (!refreshToken) return res.status(403).send("Access denied.");
+  const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  const email = decoded.email;
   const { isValid, role } = verifyRefresh(email, refreshToken);
 
   if (!refreshToken) res.status(403).send("Invalid refresh token");
