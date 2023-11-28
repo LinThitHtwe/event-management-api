@@ -9,6 +9,7 @@ const organizerInvoiceRoutes = require("./organizerInvoiceRoutes");
 const organizerDashboardRoutes = require("./organizerDashboardRoutes");
 const organizerSidePaymentRoutes = require("./organizerSidePaymentRoutes");
 const ticketRoutes = require("./ticketRoutes");
+const publicOrganizerRoute = require("./publicSideOrganizerRoute");
 const Role = require("../config/role");
 const permissionByRole = require("../middleware/rolePermission");
 
@@ -17,6 +18,7 @@ router.use("/auth", authRouter);
 router.use("/customer", customerRoutes);
 router.use("/admin", admin);
 router.use("/organizer", organizerRouter);
+router.use("/public-organizer", publicOrganizerRoute);
 router.use("/organizer-payment", organizerSidePaymentRoutes);
 router.use("/organizer-invoice/", organizerInvoiceRoutes);
 router.use("/event", eventRoute);

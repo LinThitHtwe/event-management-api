@@ -27,6 +27,25 @@ const get_organizer_by_id = async (req, res) => {
   }
 };
 
+const get_organizer_by_id_from_public_side = async (req, res) => {
+  try {
+    const { name, phone, email, bio, companyName, contact } =
+      await organizerService.get_organizer_by_id(req.params.id);
+
+    const publicSideOrganizer = {
+      name,
+      phone,
+      email,
+      bio,
+      companyName,
+      contact,
+    };
+    res.send(publicSideOrganizer);
+  } catch (error) {
+    res.status(404).send(error);
+  }
+};
+
 const update_organizer = async (req, res) => {
   try {
     const organizer = await organizerService.update_organizer(
@@ -87,7 +106,6 @@ const change_email = async (req, res) => {
   }
 };
 
-
 const filter_organizers = async (req, res) => {
   try {
     const organizers = await organizerService.filterOrganizer(req.query);
@@ -101,6 +119,7 @@ module.exports = {
   create_organizer,
   get_organizers,
   get_organizer_by_id,
+  get_organizer_by_id_from_public_side,
   update_organizer,
   manage_organizer_level,
   manage_organizer_status,
