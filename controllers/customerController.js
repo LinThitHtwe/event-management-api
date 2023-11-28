@@ -18,7 +18,7 @@ const getCustomerById = async (req, res) => {
   }
 };
 const addCustomer = async (req, res) => {
-  let customer; // Declare customer variable outside try block for later use in catch block
+  let customer;
   try {
     const { customer: addCustomer, tickets } = req.body;
     customer = await customerService.add_customer(addCustomer);
