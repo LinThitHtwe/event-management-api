@@ -12,7 +12,24 @@ const messages = {
 const addOrganizerInvoice = async (req, res) => {
   try {
     const data = await add_organizer_payment_invoice(req.body);
-    if (data.length > 0) {
+    console.log(data);
+    if (!data.error) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(404).json({ message: messages.notFound });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: messages.serverError });
+  }
+};
+
+const upgradeOrganizerPayment = async (req, res) => {
+  try {
+    const id = await getOrganizerInvoiceById();
+    const accountLevelId = req.body.subscription.accountLevelId;
+    const data = await add_organizer_payment_invoice(req.body.payment);
+
+    if (!data.error) {
       return res.status(200).json(data);
     } else {
       return res.status(404).json({ message: messages.notFound });
@@ -53,4 +70,5 @@ module.exports = {
   addOrganizerInvoice,
   getAllOrganizerInvoice,
   getOrganizerInvoiceById,
+  upgradeOrganizerPayment,
 };
