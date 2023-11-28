@@ -3,7 +3,8 @@ const {
   get_all_organizer_payment_invoice,
   get_organizer_payment_invoice_by_id,
 } = require("../services/organizerPaymentInvoiceService");
-
+const { manage_organizer_level } = require("../services/organizerService");
+const { getOrganizerIdFromToken } = require("../helper/index");
 const messages = {
   notFound: "No Data Found",
   serverError: "Internal Server Error",
@@ -25,17 +26,24 @@ const addOrganizerInvoice = async (req, res) => {
 
 const upgradeOrganizerPayment = async (req, res) => {
   try {
-    const id = await getOrganizerInvoiceById();
-    const accountLevelId = req.body.subscription.accountLevelId;
-    const data = await add_organizer_payment_invoice(req.body.payment);
+    const id = await getOrganizerIdFromToken(req, res);
+    if (id === null) {
+      return res.status(403).send("Invalid token.");
+    }
 
-    if (!data.error) {
-      return res.status(200).json(data);
+    const accountLevelId = req.body.subscription.accountLevelId;
+
+    const payment = await add_organizer_payment_invoice(req.body.payment);
+
+    const upgradeAccount = await manage_organizer_level(id, accountLevelId);
+
+    if (!payment.error) {
+      return res.status(200).json({ payment, upgradeAccount });
     } else {
       return res.status(404).json({ message: messages.notFound });
     }
   } catch (error) {
-    return res.status(500).json({ message: messages.serverError });
+    res.json({ error });
   }
 };
 

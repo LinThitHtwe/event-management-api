@@ -12,14 +12,19 @@ const verifyRefresh = (email, token) => {
   }
 };
 
-const getOrganizerIdFromToken = () => {
+const getOrganizerIdFromToken = (req, res) => {
   const token = req.cookies.accessToken;
 
   if (!token) return res.status(403).send("Access denied.");
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  const id = decoded.UserInfo.id;
-  return id;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const id = decoded.UserInfo.id;
+    return id;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
 };
 
 module.exports = { verifyRefresh, getOrganizerIdFromToken };
