@@ -7,7 +7,6 @@ const {
   manage_organizer_status,
   change_email,
   change_phone,
-  filter_organizers,
 } = require("../controllers/organizerController");
 const permissionByRole = require("../middleware/rolePermission");
 const verifyjwt = require("../middleware/verifyJwt");
@@ -22,9 +21,19 @@ router.patch("/update_level/:id/:level", manage_organizer_level);
 router.patch("/update_status/:id/:status", manage_organizer_status);
 router.patch("/update_phone/:id/:phone", change_phone);
 router.patch("/update_email/:id/:email", change_email);
-router.get("/get_all", permissionByRole(Role.superAdmin), verifyjwt, get_organizers);
-router.get("/all", filter_organizers);
+router.get(
+  "/get_all",
+  permissionByRole(Role.superAdmin),
+  verifyjwt,
+  get_organizers
+);
+router.get("/all", get_organizers);
 
-router.get("/:id", permissionByRole(Role.organzier), verifyjwt, get_organizer_by_id);
+router.get(
+  "/:id",
+  permissionByRole(Role.organzier),
+  verifyjwt,
+  get_organizer_by_id
+);
 
 module.exports = router;

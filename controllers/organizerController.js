@@ -11,7 +11,14 @@ const create_organizer = async (req, res) => {
 
 const get_organizers = async (req, res) => {
   try {
-    const organizers = await organizerService.get_organizers();
+    const { page, pageSize, name, accountStatus, sortBy } = req.query;
+    const organizers = await organizerService.get_organizers(
+      page,
+      pageSize,
+      name,
+      accountStatus,
+      sortBy
+    );
     res.send(organizers);
   } catch (error) {
     res.status(500).send(error);

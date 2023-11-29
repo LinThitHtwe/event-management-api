@@ -10,7 +10,7 @@ const eventSchema = new Schema(
     ticketCloseDate: { type: Date },
     contact: { type: String },
     location: { type: String },
-    thumbnail: { type: String },
+    thumbnail: [{ type: String }],
     description: { type: String },
     organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Organizer" },
     payments: [ {type: mongoose.Schema.Types.ObjectId, ref: "Payment"} ],
