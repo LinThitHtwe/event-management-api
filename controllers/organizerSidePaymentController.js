@@ -1,3 +1,4 @@
+const { getOrganizerIdFromToken } = require("../helper");
 const {
   get_payment_by_organizer_id,
   update_payment,
@@ -10,11 +11,10 @@ const messages = {
 };
 
 const getAllPaymentsByOrganizerId = async (req, res) => {
-  const { organizerId } = req.params;
+  const id = await getOrganizerIdFromToken(req, res);
+  console.log(id);
   try {
-    const allPaymentsByOrganizer = await get_payment_by_organizer_id(
-      organizerId
-    );
+    const allPaymentsByOrganizer = await get_payment_by_organizer_id(id);
 
     if (allPaymentsByOrganizer.length <= 0) {
       return res.status(404).json({ message: messages.notFound });

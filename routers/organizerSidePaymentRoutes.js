@@ -6,7 +6,7 @@ const {
 const express = require("express");
 const router = express.Router();
 
-router.get("/all/:organizerId", getAllPaymentsByOrganizerId);
+router.get("/all", getAllPaymentsByOrganizerId);
 router.post("/create", addOrganizerPayment);
 router.put("/update/:paymentId", updateOrganizerPayment);
 

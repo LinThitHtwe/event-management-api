@@ -6,13 +6,16 @@ const {
   get_all_ticket_info_by_event_id,
 } = require("../services/ticketInfoService");
 const { getTicketsByEventId } = require("../services/ticketService");
+const { getOrganizerIdFromToken } = require("../helper");
 
 const postCreateEvent = async (req, res) => {
   try {
     const eventData = req.body.event;
     const paymentData = req.body.payment;
     const { tickets } = req.body.event;
-    const createdEvent = await eventService.add_event(eventData);
+    const id = await getOrganizerIdFromToken(req, res);
+    console.log(id);
+    const createdEvent = await eventService.add_event({ ...eventData, organizer: id });
 
     console.log(eventData);
     const createdTicketInfoPromises = tickets.map(async (tic) => {
@@ -133,19 +136,13 @@ const searchValue = async (req, res) => {
             event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
           (title === "thumbnail" &&
             event.thumbnail &&
-            event.thumbnail
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
+            event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
           (title === "description" &&
             event.description &&
-            event.description
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
+            event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
           (title === "createdBy" &&
             event.createdBy &&
-            event.createdBy
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
+            event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
           (title === "trendingLevel" &&
             event.trendingLevel &&
             event.trendingLevel.includes(searchValue))
@@ -153,31 +150,17 @@ const searchValue = async (req, res) => {
       }))
     : (filterDate = events.filter((event) => {
         return (
-          (event.name &&
-            event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.eventStartDate &&
-            event.eventStartDate.includes(searchValue)) ||
+          (event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
           (event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
-          (event.ticketOpenDate &&
-            event.ticketOpenDate.includes(searchValue)) ||
-          (event.ticketCloseDate &&
-            event.ticketCloseDate.includes(searchValue)) ||
-          (event.contact &&
-            event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.location &&
-            event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.thumbnail &&
-            event.thumbnail
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
+          (event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
+          (event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
+          (event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
           (event.description &&
-            event.description
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
-          (event.createdBy &&
-            event.createdBy
-              .toLowerCase()
-              .includes(searchValue.toLowerCase())) ||
+            event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
           (event.trendingLevel && event.trendingLevel.includes(searchValue))
         );
       }));
