@@ -9,13 +9,9 @@ const get_all_organizer_payment_invoice = async () => {
   }
 };
 
-const get_organizer_payment_invoice_by_id = async (
-  organizerPaymentInvoiceId
-) => {
+const get_organizer_payment_invoice_by_id = async (organizerPaymentInvoiceId) => {
   try {
-    const result = await OrganizerPaymentInvoice.findById(
-      organizerPaymentInvoiceId
-    );
+    const result = await OrganizerPaymentInvoice.findById(organizerPaymentInvoiceId);
 
     return { data: result };
   } catch (error) {
@@ -24,14 +20,12 @@ const get_organizer_payment_invoice_by_id = async (
 };
 
 const add_organizer_payment_invoice = async (organizerPaymentInvoiceData) => {
-  const organizerPaymentInvoice = new OrganizerPaymentInvoice(
-    organizerPaymentInvoiceData
-  );
+  const organizerPaymentInvoice = new OrganizerPaymentInvoice(organizerPaymentInvoiceData);
   try {
     const result = await organizerPaymentInvoice.save();
     return result;
   } catch (error) {
-    return error;
+    return { error: error };
   }
 };
 

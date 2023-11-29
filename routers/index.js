@@ -20,7 +20,7 @@ router.use("/admin", admin);
 router.use("/organizer", organizerRouter);
 router.use("/public-organizer", publicOrganizerRoute);
 router.use("/organizer-payment", organizerSidePaymentRoutes);
-router.use("/organizer-invoice/", organizerInvoiceRoutes);
+router.use("/organizer-invoice", organizerInvoiceRoutes);
 router.use("/event", eventRoute);
 router.use("/ticket", ticketRoutes);
 router.use("/upgrade-payment", upgradePaymentRoutes);
