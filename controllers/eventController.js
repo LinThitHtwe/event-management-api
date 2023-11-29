@@ -64,6 +64,7 @@ const getEvents = async (req, res) => {
     organizerId,
     sortBy,
   } = req.query;
+  console.log("Page no", page);
   const events = await eventService.get_events(
     page,
     pageSize,

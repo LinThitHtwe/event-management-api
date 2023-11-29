@@ -73,7 +73,6 @@ const get_events = async (
       };
     }
 
-    console.log("Query", query);
     let result = {
       content: await Event.find(query)
         .sort(
