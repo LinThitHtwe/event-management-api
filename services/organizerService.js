@@ -43,10 +43,9 @@ const get_organizers = async (
       };
     }
 
-    console.log("Query", query);
     let result = {
       content: await Organizer.find(query)
-        .sort(sortBy === "blueMark" ? { accountLevel: -1 } : { createdAt: -1 })
+        .sort(sortBy === "blueMark" ? { accountLevel: 1 } : { createdAt: -1 })
         .skip((parseInt(page) - 1) * parseInt(pageSize))
         .limit(pageSize),
       total: await Organizer.countDocuments(query),
