@@ -137,9 +137,14 @@ const filter_tickets = async (query) => {
           (!filterObj.organizerId || (result.payment && result.payment.organizer.toString() === filterObj.organizerId)) &&
           (!filterObj.ticketType || (result.ticketInfo && result.ticketInfo.type === filterObj.ticketType))
         );
-      });      
+      });
 
-    return filteredResult;
+      const response = {
+        content: filteredResult,
+        totalCount: await Ticket.countDocuments(query),
+      }
+
+    return response;
   } catch (error) {
     console.log(error);
     return error;
