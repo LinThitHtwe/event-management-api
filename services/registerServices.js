@@ -100,7 +100,7 @@ const register = async (data, role, res) => {
 
     const userId = user._id;
 
-    const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}`;
+    const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}/${token}`;
     const paymentData = data.payment;
     const response = [];
     for (const payment of paymentData) {
@@ -131,18 +131,18 @@ const register = async (data, role, res) => {
 };
 
 const verification = async (req, res) => {
+  console.log("Verify");
   try {
     let user;
     user =
       (await Organizer.findOne({ _id: req.params.userId })) ||
       (await Admin.findOne({ _id: req.params.userId }));
-
     if (!user) return res.status(400).send("Invalid link");
-    (await Organizer.updateOne({ _id: req.params.userId, isVerify: true })) ||
-      Admin.updateOne({ _id: req.params.userId, isVerfiy: true });
-    res.send("Email Verified Successfully");
+    await Organizer.updateOne({ _id: req.params.userId }, { $set: { isVerify: true } });
+    await Admin.updateOne({ _id: req.params.userId }, { $set: { isVerify: true } });
+    res.send({ message: "Email Verified Successfully", success: true });
   } catch (error) {
-    res.status(400).send("An error occurred while verifying");
+    console.log(error);
   }
 };
 

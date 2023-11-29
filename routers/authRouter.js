@@ -12,7 +12,7 @@ const {
 
 router.post("/signup_staff", signupForStaff);
 router.post("/signup_organizer", signupForOrganizer);
-router.get("/verify/:userId", signupForVerification);
+router.get("/verify/:userId/:token", signupForVerification);
 router.post("/login_staff", loginForAdmin);
 router.post("/login_organizer", loginForOrganzier);
 router.post("/refresh", generateToken);
