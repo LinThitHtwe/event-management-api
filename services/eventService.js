@@ -3,8 +3,8 @@ const Event = require("../models/event");
 const mongoose = require("mongoose");
 
 const get_events = async (
-  page,
-  pageSize = 2,
+  page = 1,
+  pageSize = 6,
   name,
   eventStartDate,
   eventEndDate,
@@ -29,6 +29,10 @@ const get_events = async (
       eventStartDate && eventEndDate && !isUpcoming
         ? {
             $lte: new Date(eventEndDate),
+          }
+        : eventStartDate && !isUpcoming
+        ? {
+            $lte: new Date(eventStartDate),
           }
         : null
     );
@@ -57,8 +61,6 @@ const get_events = async (
       organizerId ? new mongoose.Types.ObjectId(organizerId) : null
     );
 
-    console.log(criteria);
-
     const isCriteriaEmpty = Object.values(criteria).every(
       (value) => value === ""
     );
@@ -72,12 +74,16 @@ const get_events = async (
     }
 
     console.log("Query", query);
-    let result = await Event.find(query)
-      .sort(
-        sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
-      )
-      .skip((page - 1) * pageSize)
-      .limit(pageSize);
+    let result = {
+      content: await Event.find(query)
+        .sort(
+          sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
+        )
+        .skip((parseInt(page) - 1) * parseInt(pageSize))
+        .limit(pageSize),
+      total: await Event.countDocuments(query),
+    };
+    console.log(result);
     return result;
   } catch (error) {
     console.log(error);
