@@ -76,17 +76,6 @@ const getTicketsByTicketInfoId = async (ticketInfoId) => {
   }
 };
 
-  // page,
-  // pageSize = 2,
-  // sort,
-  // customerName,
-  // startDate,
-  // endDate,
-  // ticketType,
-  // paymentType,
-  // eventId,
-  // organizerId
-
 const filter_tickets = async (query) => {
   let { organizerId, page, pageSize, sort, order, startDate, endDate , customerName, eventName, paymentType, ticketType } = query;
   try {
