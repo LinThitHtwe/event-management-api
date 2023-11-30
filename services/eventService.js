@@ -61,9 +61,7 @@ const get_events = async (
       organizerId ? new mongoose.Types.ObjectId(organizerId) : null
     );
 
-    const isCriteriaEmpty = Object.values(criteria).every(
-      (value) => value === ""
-    );
+    const isCriteriaEmpty = Object.values(criteria).every((value) => value === "");
 
     let query = {};
 
@@ -75,9 +73,7 @@ const get_events = async (
 
     let result = {
       content: await Event.find(query)
-        .sort(
-          sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
-        )
+        .sort(sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 })
         .skip((parseInt(page) - 1) * parseInt(pageSize))
         .limit(pageSize),
       total: await Event.countDocuments(query),
@@ -131,9 +127,7 @@ const make_boots = async (eventId) => {
 
 const get_event_by_organizer_id = async (organizerId) => {
   try {
-    const result = await Event.find({ organizer: organizerId }).populate(
-      "organizer"
-    );
+    const result = await Event.find({ organizer: organizerId }).populate("organizer");
     return result;
   } catch (error) {
     return { error: error };
@@ -142,11 +136,14 @@ const get_event_by_organizer_id = async (organizerId) => {
 
 const add_event = async (eventData) => {
   const event = new Event(eventData);
+
   try {
     const result = await event.save();
+
     return result;
   } catch (error) {
-    return error;
+    console.error("Error creating event:", error);
+    throw error;
   }
 };
 
@@ -245,18 +242,14 @@ const sortEvents_text = (data, asc, sort) => {
   const sortedData = data.sort((a, b) => {
     const nameA = a[sort] || "";
     const nameB = b[sort] || "";
-    return asc === "true"
-      ? nameA.localeCompare(nameB)
-      : nameB.localeCompare(nameA);
+    return asc === "true" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
   });
   return sortedData;
 };
 
 const sortEvents_trendingLevel = (data, asc) => {
   const sortedData = data.sort((a, b) =>
-    asc === "true"
-      ? a.trendingLevel - b.trendingLevel
-      : b.trendingLevel - a.trendingLevel
+    asc === "true" ? a.trendingLevel - b.trendingLevel : b.trendingLevel - a.trendingLevel
   );
   return sortedData;
 };

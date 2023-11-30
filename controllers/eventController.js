@@ -12,12 +12,10 @@ const { getOrganizerIdFromToken } = require("../helper");
 const postCreateEvent = async (req, res) => {
   try {
     const eventData = req.body.event;
-    const paymentData = req.body.payment;
     const { tickets } = req.body.event;
     const id = await getOrganizerIdFromToken(req, res);
     const createdEvent = await eventService.add_event({ ...eventData, organizer: id });
 
-    console.log(eventData);
     const createdTicketInfoPromises = tickets.map(async (tic) => {
       const event = createdEvent._id;
       const ticket = { ...tic, event };
@@ -37,7 +35,7 @@ const postCreateEvent = async (req, res) => {
 
     const createdTicketInfo = await Promise.all(createdTicketInfoPromises);
 
-    res.json("Success");
+    res.json(createdTicketInfo);
   } catch (error) {
     console.error("Error in postCreateEvent:", error);
     res.status(500).json({ error: "Internal Server Error" });
