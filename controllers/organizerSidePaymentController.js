@@ -26,11 +26,12 @@ const getAllPaymentsByOrganizerId = async (req, res) => {
 };
 
 const addOrganizerPayment = async (req, res) => {
+  const id = await getOrganizerIdFromToken(req, res);
   const paymentData = req.body.payment;
   const response = [];
   for (const payment of paymentData) {
     try {
-      const addedPayment = await add_payment(payment);
+      const addedPayment = await add_payment({ ...payment, organizer: id });
       response.push(addedPayment);
     } catch (error) {
       return res.json(error);

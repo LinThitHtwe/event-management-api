@@ -63,6 +63,7 @@ const generateToken = (req, res) => {
   if (!refreshToken) return res.status(403).send("Access denied.");
   const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
   const email = decoded.email;
+  const id = decoded.id;
   const { isValid, role } = verifyRefresh(email, refreshToken);
 
   if (!refreshToken) res.status(403).send("Invalid refresh token");
@@ -73,6 +74,7 @@ const generateToken = (req, res) => {
   const accessToken = jwt.sign(
     {
       UserInfo: {
+        id: id,
         email: email,
         role: role,
       },

@@ -51,14 +51,14 @@ const login = async (data, role, res, req) => {
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "5m",
+          expiresIn: "1d",
         }
       );
       const refreshToken = jwt.sign(
         { email: foundUser.email, id: foundUser._id, role: foundUser.role },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1d",
+          expiresIn: "5d",
         }
       );
       res.cookie("refreshToken", refreshToken, {

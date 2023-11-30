@@ -14,7 +14,6 @@ const postCreateEvent = async (req, res) => {
     const paymentData = req.body.payment;
     const { tickets } = req.body.event;
     const id = await getOrganizerIdFromToken(req, res);
-    console.log(id);
     const createdEvent = await eventService.add_event({ ...eventData, organizer: id });
 
     console.log(eventData);

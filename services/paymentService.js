@@ -20,9 +20,7 @@ const get_payment_by_id = async (paymentId) => {
 
 const get_payment_by_organizer_id = async (organizerId) => {
   try {
-    const result = await Payment.find({ organizer: organizerId }).populate(
-      "organizer"
-    );
+    const result = await Payment.find({ organizer: organizerId });
     return result;
   } catch (error) {
     return { error: error };
@@ -40,10 +38,7 @@ const add_payment = async (paymentData) => {
 };
 const update_payment = async (paymentId, PaymentData) => {
   try {
-    const payment = await Payment.findOneAndUpdate(
-      { _id: paymentId },
-      PaymentData
-    );
+    const payment = await Payment.findOneAndUpdate({ _id: paymentId }, PaymentData);
 
     if (!payment) {
       throw "Payment No Found";
