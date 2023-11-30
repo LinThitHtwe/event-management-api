@@ -21,6 +21,6 @@ router.get("/boost", boostsList);
 router.post("/boost/:id", makeBoosts);
 router.get("/find/:eventId", getEventById);
 router.get("/total-avaliable-ticket/:eventId", getTotalAvailableTicketByEvent);
-router.get("/events-by-organizer/:organizerId", getEventsByOrganizerId);
+router.get("/events-by-organizer", getEventsByOrganizerId);
 
 module.exports = router;

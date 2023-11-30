@@ -5,7 +5,7 @@ const {
 
 const router = require("express").Router();
 
-router.get("/barchart/:organizerId", totalTicketSale);
-router.get("/overview-data/:organizerId", getAllOverviewData);
+router.get("/barchart", totalTicketSale);
+router.get("/overview-data", getAllOverviewData);
 
 module.exports = router;

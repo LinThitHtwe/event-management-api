@@ -1,6 +1,7 @@
 const { boolean } = require("joi");
 const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
+
 const {
   add_ticket_info,
   get_all_ticket_info_by_event_id,
@@ -252,8 +253,8 @@ const getTotalAvailableTicketByEvent = async (req, res) => {
   return res.json(remainingTickets);
 };
 const getEventsByOrganizerId = async (req, res) => {
-  const { organizerId } = req.params;
-  const events = await eventService.get_event_by_organizer_id(organizerId);
+  const id = await getOrganizerIdFromToken(req, res);
+  const events = await eventService.get_event_by_organizer_id(id);
   if (events.error) {
     return res.status(404).json("No Data Found");
   }
