@@ -96,8 +96,20 @@ const generateToken = (req, res) => {
     expiresIn: "5m",
   });
 };
+const logout = async (req, res) => {
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    expiresIn: new Date(0),
+  });
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    expiresIn: new Date(0),
+  });
+  res.status(200).json({ message: "User Logout Out" });
+};
 module.exports = {
   verifyOtp,
+  logout,
   otpGenerate,
   loginForAdmin,
   generateToken,

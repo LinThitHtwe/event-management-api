@@ -8,6 +8,7 @@ const {
   generateToken,
   otpGenerate,
   verifyOtp,
+  logout,
 } = require("../controllers/authController");
 
 router.post("/signup_staff", signupForStaff);
@@ -18,5 +19,6 @@ router.post("/login_organizer", loginForOrganzier);
 router.post("/refresh", generateToken);
 router.post("/get_otpcode", otpGenerate);
 router.post("/verify_otpcode", verifyOtp);
+router.post("/logout", logout);
 
 module.exports = router;
