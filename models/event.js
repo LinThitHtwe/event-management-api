@@ -13,7 +13,7 @@ const eventSchema = new Schema(
     thumbnail: [{ type: String }],
     description: { type: String },
     organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Organizer" },
-    payments: [ {type: mongoose.Schema.Types.ObjectId, ref: "Payment"} ],
+    payments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Payment" }],
     trendingLevel: { type: Number },
   },
   { timestamps: true }

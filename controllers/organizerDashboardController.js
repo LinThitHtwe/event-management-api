@@ -11,9 +11,10 @@ const {
   get_all_ticket_info_by_event_id,
 } = require("../services/ticketInfoService");
 const { get_payment_by_organizer_id } = require("../services/paymentService");
+const { getOrganizerIdFromToken } = require("../helper/index");
 
 const totalTicketSale = async (req, res) => {
-  const organizerId = req.params.organizerId;
+  const id = await getOrganizerIdFromToken(req, res);
   const { event: eventId } = req.query;
 
   const allEventsByOrganizer = [];
@@ -21,13 +22,13 @@ const totalTicketSale = async (req, res) => {
     const event = await get_event_by_id(eventId);
     allEventsByOrganizer.push(event);
   } else {
-    const eventsByOrganizer = await get_event_by_organizer_id(organizerId);
+    const eventsByOrganizer = await get_event_by_organizer_id(id);
     eventsByOrganizer.forEach((event) => allEventsByOrganizer.push(event));
   }
 
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
-  const payment = await get_payment_by_organizer_id(organizerId);
+  const payment = await get_payment_by_organizer_id(id);
 
   const ticketPromises = payment.map(async (p) => {
     const tickets = await getTicketsByPaymentId(p._id);
@@ -35,9 +36,11 @@ const totalTicketSale = async (req, res) => {
 
     return { paymentName: p.name, ticketCount: ticketCount };
   });
+
   const ticketCountByPayment = await Promise.all(ticketPromises);
+
   const toalTicketByPayment = [
-    ["Color", "Tickets"],
+    ["Tickets", "Amount"],
     ...ticketCountByPayment.map(({ paymentName, ticketCount }) => [
       paymentName,
       ticketCount,
@@ -79,18 +82,18 @@ const totalTicketSale = async (req, res) => {
     totalTicketSaleByType: resultArray,
     toalTicketByPayment: toalTicketByPayment,
   };
-  return res.json(returnValues);
+  return res.json(ticketPromises);
 };
 
 const getAllOverviewData = async (req, res) => {
-  const organizerId = req.params.organizerId;
+  const id = await getOrganizerIdFromToken(req, res);
   const { event: eventId } = req.query;
   const allEventsByOrganizer = [];
   if (eventId) {
     const event = await get_event_by_id(eventId);
     allEventsByOrganizer.push(event);
   } else {
-    const eventsByOrganizer = await get_event_by_organizer_id(organizerId);
+    const eventsByOrganizer = await get_event_by_organizer_id(id);
     eventsByOrganizer.forEach((event) => allEventsByOrganizer.push(event));
   }
 
