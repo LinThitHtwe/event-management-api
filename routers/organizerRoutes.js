@@ -2,6 +2,7 @@ const {
   create_organizer,
   get_organizers,
   get_organizer_by_id,
+  get_organizer_byId,
   update_organizer,
   manage_organizer_level,
   manage_organizer_status,
@@ -25,5 +26,7 @@ router.get("/get_all", permissionByRole(Role.superAdmin), verifyjwt, get_organiz
 router.get("/all", get_organizers);
 
 router.get("", permissionByRole(Role.organzier), verifyjwt, get_organizer_by_id);
+router.get("/all/:organizerId", get_organizer_byId);
+
 
 module.exports = router;
