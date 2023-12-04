@@ -281,9 +281,9 @@ const getEventsByOrganizerId = async (req, res) => {
 };
 
 const getEventsByOrganizer_Id = async (req, res) => {
-  const {id} = req.params;
-  console.log("🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:", id)
-  const events = await eventService.get_event_by_organizer_id(id);
+  const {organizerId} = req.params;
+  console.log("🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:", organizerId);
+  const events = await eventService.get_event_by_organizer_id(organizerId);
   if (events.error) {
     return res.status(404).json("No Data Found");
   }
