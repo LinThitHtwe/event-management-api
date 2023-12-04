@@ -280,6 +280,16 @@ const getEventsByOrganizerId = async (req, res) => {
   return res.json(events);
 };
 
+const getEventsByOrganizer_Id = async (req, res) => {
+  const {id} = req.params;
+  console.log("🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:", id)
+  const events = await eventService.get_event_by_organizer_id(id);
+  if (events.error) {
+    return res.status(404).json("No Data Found");
+  }
+  return res.json(events);
+};
+
 module.exports = {
   getEvents,
   getSortValue,
@@ -292,4 +302,5 @@ module.exports = {
   makeBoosts,
   getTotalAvailableTicketByEvent,
   getEventsByOrganizerId,
+  getEventsByOrganizer_Id
 };
