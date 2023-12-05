@@ -36,6 +36,17 @@ const get_organizer_by_id = async (req, res) => {
   }
 };
 
+const get_organizer_byId = async (req, res) => {
+  const { organizerId } = req.params;
+  //const id = await getOrganizerIdFromToken(req, res);
+  try {
+    const organizer = await organizerService.get_organizer_by_id(organizerId);
+    res.send(organizer);
+  } catch (error) {
+    res.status(404).send(error);
+  }
+};
+
 const get_organizer_by_id_from_public_side = async (req, res) => {
   try {
     const { name, phone, email, bio, companyName, contact } =
@@ -119,6 +130,7 @@ module.exports = {
   create_organizer,
   get_organizers,
   get_organizer_by_id,
+  get_organizer_byId,
   get_organizer_by_id_from_public_side,
   update_organizer,
   manage_organizer_level,

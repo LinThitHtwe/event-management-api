@@ -1,7 +1,15 @@
-const { getTicketsByEventId, getTicketsByPaymentId } = require("../services/ticketService");
+const {
+  getTicketsByEventId,
+  getTicketsByPaymentId,
+} = require("../services/ticketService");
 
-const { get_event_by_organizer_id, get_event_by_id } = require("../services/eventService");
-const { get_all_ticket_info_by_event_id } = require("../services/ticketInfoService");
+const {
+  get_event_by_organizer_id,
+  get_event_by_id,
+} = require("../services/eventService");
+const {
+  get_all_ticket_info_by_event_id,
+} = require("../services/ticketInfoService");
 const { get_payment_by_organizer_id } = require("../services/paymentService");
 const { getOrganizerIdFromToken } = require("../helper/index");
 
@@ -28,10 +36,15 @@ const totalTicketSale = async (req, res) => {
 
     return { paymentName: p.name, ticketCount: ticketCount };
   });
+
   const ticketCountByPayment = await Promise.all(ticketPromises);
+
   const toalTicketByPayment = [
-    ["Color", "Tickets"],
-    ...ticketCountByPayment.map(({ paymentName, ticketCount }) => [paymentName, ticketCount]),
+    ["Tickets", "Amount"],
+    ...ticketCountByPayment.map(({ paymentName, ticketCount }) => [
+      paymentName,
+      ticketCount,
+    ]),
   ];
   const eventTicketPromises = allEventsByOrganizer.map(async (event) => {
     const tickets = await getTicketsByEventId(event._id.toString());
@@ -41,7 +54,10 @@ const totalTicketSale = async (req, res) => {
 
   const totalTicketSaleByEvent = [
     ["Total ticket Sale By Event", "Total"],
-    ...eventTicketCounts.map(({ eventName, ticketCount }) => [eventName, ticketCount]),
+    ...eventTicketCounts.map(({ eventName, ticketCount }) => [
+      eventName,
+      ticketCount,
+    ]),
   ];
 
   const ticketTypeCounts = new Map();
@@ -55,7 +71,10 @@ const totalTicketSale = async (req, res) => {
 
   const resultArray = [
     ["Total Ticket Scale", "Amount"],
-    ...Array.from(ticketTypeCounts.entries()).map(([type, count]) => [type, count]),
+    ...Array.from(ticketTypeCounts.entries()).map(([type, count]) => [
+      type,
+      count,
+    ]),
   ];
 
   const returnValues = {
@@ -63,7 +82,7 @@ const totalTicketSale = async (req, res) => {
     totalTicketSaleByType: resultArray,
     toalTicketByPayment: toalTicketByPayment,
   };
-  return res.json(returnValues);
+  return res.json(ticketPromises);
 };
 
 const getAllOverviewData = async (req, res) => {
@@ -81,7 +100,9 @@ const getAllOverviewData = async (req, res) => {
   const eventIds = allEventsByOrganizer.map((event) => event._id.toString());
   const allTickets = await Promise.all(eventIds.map(getTicketsByEventId));
 
-  const ticketInfos = await Promise.all(eventIds.map(get_all_ticket_info_by_event_id));
+  const ticketInfos = await Promise.all(
+    eventIds.map(get_all_ticket_info_by_event_id)
+  );
 
   const totalTicketsToSell = ticketInfos.reduce((total, tickets) => {
     return (
@@ -100,10 +121,10 @@ const getAllOverviewData = async (req, res) => {
     );
   }, 0);
   const overviewData = {
-    totalTicketsSold: allTickets.length,
+    totalTicketsSold: allTickets[0].length,
     totalPrice: totalPrice,
     allTotalAvaliableTickets: totalTicketsToSell,
-    ticketsLeftToSell: totalTicketsToSell - allTickets.length,
+    ticketsLeftToSell: totalTicketsToSell - allTickets[0].length,
   };
   return res.json(overviewData);
 };

@@ -11,23 +11,24 @@ const { getOrganizerIdFromToken } = require("../helper");
 
 const postCreateEvent = async (req, res, next) => {
   try {
-    const eventData = req.body.event;
-    const { tickets } = req.body.event;
+    const { event, ticketInfos } = req.body;
     const id = await getOrganizerIdFromToken(req, res);
-    const createdEvent = await eventService.add_event({ ...eventData, organizer: id });
+    const createdEvent = await eventService.add_event({
+      ...event,
+      organizer: id,
+    });
 
-    const createdTicketInfoPromises = tickets.map(async (tic) => {
+    const createdTicketInfoPromises = ticketInfos.map(async (ticketInfo) => {
       const event = createdEvent._id;
-      const ticket = { ...tic, event };
+      const ticket = { ...ticketInfo, event };
       try {
-        const ticketInfo = await add_ticket_info(ticket);
-        if (!ticketInfo) {
-          console.log("Ticket info not created successfully");
+        const createdTicketInfo = await add_ticket_info(ticket);
+        if (!createdTicketInfo) {
           eventService.delete_by_id(createdEvent._id);
+          return res.status(500).json({ error: error });
         }
         return ticketInfo;
       } catch (error) {
-        console.error("Error creating ticket info:", error);
         eventService.delete_by_id(createdEvent._id);
         throw error;
       }
@@ -40,6 +41,7 @@ const postCreateEvent = async (req, res, next) => {
     console.error("Error in postCreateEvent:", error);
     res.status(500).json({ error: "Internal Server Error" });
     next(error);
+
   }
 };
 
@@ -135,13 +137,19 @@ const searchValue = async (req, res) => {
             event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
           (title === "thumbnail" &&
             event.thumbnail &&
-            event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
+            event.thumbnail
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
           (title === "description" &&
             event.description &&
-            event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
+            event.description
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
           (title === "createdBy" &&
             event.createdBy &&
-            event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
+            event.createdBy
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
           (title === "trendingLevel" &&
             event.trendingLevel &&
             event.trendingLevel.includes(searchValue))
@@ -149,17 +157,31 @@ const searchValue = async (req, res) => {
       }))
     : (filterDate = events.filter((event) => {
         return (
-          (event.name && event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.eventStartDate && event.eventStartDate.includes(searchValue)) ||
+          (event.name &&
+            event.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.eventStartDate &&
+            event.eventStartDate.includes(searchValue)) ||
           (event.eventEndDate && event.eventEndDate.includes(searchValue)) ||
-          (event.ticketOpenDate && event.ticketOpenDate.includes(searchValue)) ||
-          (event.ticketCloseDate && event.ticketCloseDate.includes(searchValue)) ||
-          (event.contact && event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.location && event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.thumbnail && event.thumbnail.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.ticketOpenDate &&
+            event.ticketOpenDate.includes(searchValue)) ||
+          (event.ticketCloseDate &&
+            event.ticketCloseDate.includes(searchValue)) ||
+          (event.contact &&
+            event.contact.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.location &&
+            event.location.toLowerCase().includes(searchValue.toLowerCase())) ||
+          (event.thumbnail &&
+            event.thumbnail
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
           (event.description &&
-            event.description.toLowerCase().includes(searchValue.toLowerCase())) ||
-          (event.createdBy && event.createdBy.toLowerCase().includes(searchValue.toLowerCase())) ||
+            event.description
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
+          (event.createdBy &&
+            event.createdBy
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())) ||
           (event.trendingLevel && event.trendingLevel.includes(searchValue))
         );
       }));
@@ -260,6 +282,16 @@ const getEventsByOrganizerId = async (req, res) => {
   return res.json(events);
 };
 
+const getEventsByOrganizer_Id = async (req, res) => {
+  const {organizerId} = req.params;
+  console.log("🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:", organizerId);
+  const events = await eventService.get_event_by_organizer_id(organizerId);
+  if (events.error) {
+    return res.status(404).json("No Data Found");
+  }
+  return res.json(events);
+};
+
 module.exports = {
   getEvents,
   getSortValue,
@@ -272,4 +304,5 @@ module.exports = {
   makeBoosts,
   getTotalAvailableTicketByEvent,
   getEventsByOrganizerId,
+  getEventsByOrganizer_Id
 };
