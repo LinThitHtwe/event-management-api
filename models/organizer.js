@@ -11,7 +11,7 @@ const organizerSchema = new Schema(
     thumbnail: { type: String },
     contact: { type: String },
     accountLevel: { type: Number },
-    accountStatus: { type: String },
+    accountStatus: { type: String, default: "active" },
     bio: { type: String },
     role: { type: String, default: role.organzier },
     isVerify: { type: Boolean, default: false },
