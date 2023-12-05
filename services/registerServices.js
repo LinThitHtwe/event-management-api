@@ -138,8 +138,8 @@ const verification = async (req, res) => {
       (await Organizer.findOne({ _id: req.params.userId })) ||
       (await Admin.findOne({ _id: req.params.userId }));
     if (!user) return res.status(400).send("Invalid link");
-    await Organizer.updateOne({ _id: req.params.userId }, { $set: { isVerify: true } });
-    await Admin.updateOne({ _id: req.params.userId }, { $set: { isVerify: true } });
+    await Organizer.updateOne({ _id: req.params.userId }, { $set: { isVerify: true, accountStatus:'active' } });
+    await Admin.updateOne({ _id: req.params.userId }, { $set: { isVerify: true ,accountStatus:'active'} });
     res.send({ message: "Email Verified Successfully", success: true });
   } catch (error) {
     console.log(error);

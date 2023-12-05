@@ -9,7 +9,7 @@ const {
 const { getTicketsByEventId } = require("../services/ticketService");
 const { getOrganizerIdFromToken } = require("../helper");
 
-const postCreateEvent = async (req, res) => {
+const postCreateEvent = async (req, res, next) => {
   try {
     const { event, ticketInfos } = req.body;
     const id = await getOrganizerIdFromToken(req, res);
@@ -39,7 +39,9 @@ const postCreateEvent = async (req, res) => {
     res.json(createdTicketInfo);
   } catch (error) {
     console.error("Error in postCreateEvent:", error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
+
   }
 };
 
