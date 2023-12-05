@@ -31,7 +31,7 @@ const organizerSchema = Joi.object({
   contact: Joi.string(),
   accountLevel: Joi.number(),
   bio: Joi.string(),
-  accountStatus: Joi.string().default("active"),
+  accountStatus: Joi.string().default("inactive"),
   payment: Joi.array().items(
     Joi.object({
       name: Joi.string().required(),
