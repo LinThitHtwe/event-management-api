@@ -25,6 +25,22 @@ const getAllPaymentsByOrganizerId = async (req, res) => {
   }
 };
 
+
+const getAllPaymentsByOrganizerIdAdmin = async (req, res) => {
+  const id = await req.params.organizerId
+  console.log(id);
+  try {
+    const allPaymentsByOrganizer = await get_payment_by_organizer_id(id);
+
+    if (allPaymentsByOrganizer.length <= 0) {
+      return res.status(404).json({ message: messages.notFound });
+    }
+    return res.status(200).json(allPaymentsByOrganizer);
+  } catch (error) {
+    return res.status(500).json({ message: messages.serverError });
+  }
+};
+
 const addOrganizerPayment = async (req, res) => {
   const id = await getOrganizerIdFromToken(req, res);
   const paymentData = req.body.payment;
@@ -59,4 +75,5 @@ module.exports = {
   getAllPaymentsByOrganizerId,
   updateOrganizerPayment,
   addOrganizerPayment,
+  getAllPaymentsByOrganizerIdAdmin
 };
