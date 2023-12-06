@@ -4,6 +4,7 @@ const {
   getOnePaymentForAccountUpgradeAndTrendingLevel,
   addPaymentForAccountUpgradeAndTrendingLevel,
   updatePaymentForAccountUpgradeAndTrendingLevel,
+  upgradePaymentDisableEnable,
 } = require("../controllers/upgradePaymentController");
 
 router.get("/all", getAllPaymentForAccountUpgradeAndTrendingLevel);
@@ -19,9 +20,6 @@ router.put(
   updatePaymentForAccountUpgradeAndTrendingLevel
 );
 
-router.put(
-  "/disable/:upgradePaymentId",
-  updatePaymentForAccountUpgradeAndTrendingLevel
-);
+router.put("/disable/:upgradePaymentId", upgradePaymentDisableEnable);
 
 module.exports = router;
