@@ -7,9 +7,11 @@ const speakeasy = require("@levminer/speakeasy");
 const { verifyRefresh } = require("../helper");
 
 let secret = speakeasy.generateSecret({ length: 20 });
+const getCurrentTime = () => Math.floor(Date.now() / 1000);
+
 const otpGenerate = async (req, res) => {
   const { email } = req.body;
-  let currentTime = Math.floor(Date.now() / 1000);
+  let currentTime = getCurrentTime();
   let decoded;
   if (!email) {
     const token = req.cookies.accessToken;
@@ -34,14 +36,18 @@ const otpGenerate = async (req, res) => {
 };
 
 const verifyOtp = async (req, res) => {
-  const { code } = req.body;
-  const tokenValidates = speakeasy.totp.verify({
-    secret: secret.base32,
-    encoding: "base32",
-    token: code,
-    time: Math.floor(Date.now() / 1000),
-  });
-  res.json({ tokenValidates });
+  try {
+    const { code } = req.body;
+    const tokenValidates = speakeasy.totp.verify({
+      secret: secret.base32,
+      encoding: "base32",
+      token: code,
+      time: getCurrentTime(),
+    });
+    res.json({ tokenValidates });
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
 const signupForStaff = async (req, res) => {
   await register(req.body, Role.staff, res);
