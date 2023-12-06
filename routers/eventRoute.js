@@ -18,7 +18,6 @@ const {
 router.get("/sort", getSortValue);
 router.get("/", getEvents);
 router.post("/create", postCreateEvent);
-router.get("/search", searchValue);
 router.get("/boost", boostsList);
 router.post("/boost/:id", makeBoosts);
 router.get("/find/:eventId", getEventById);
