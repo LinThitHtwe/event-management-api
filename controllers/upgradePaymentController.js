@@ -61,9 +61,34 @@ const updatePaymentForAccountUpgradeAndTrendingLevel = async (req, res) => {
   }
 };
 
+const upgradePaymentDisableEnable = async (req, res) => {
+  const updatePaymentId = req.params.upgradePaymentId;
+  try {
+    const existingData = await get_upgrade_payment_by_id(updatePaymentId);
+
+    if (existingData.error) {
+      return res.status(500).json({ message: messages.serverError });
+    }
+    const updatedData = await upgrade_upgrade_payment(updatePaymentId, {
+      ...existingData,
+      isActive: !existingData.data.isActive,
+    });
+
+    if (updatedData.data) {
+      return res.status(200).json(updatedData);
+    } else {
+      return res.status(404).json({ message: messages.notFound });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: messages.serverError });
+  }
+};
+
 module.exports = {
   getAllPaymentForAccountUpgradeAndTrendingLevel,
   getOnePaymentForAccountUpgradeAndTrendingLevel,
   addPaymentForAccountUpgradeAndTrendingLevel,
   updatePaymentForAccountUpgradeAndTrendingLevel,
+  upgradePaymentDisableEnable,
 };
