@@ -305,6 +305,7 @@ const getEventsByOrganizer_Id = async (req, res) => {
 };
 
 module.exports = {
+  getEventsByOrganizer_Id,
   getEvents,
   getSortValue,
   postCreateEvent,

@@ -79,7 +79,8 @@ const get_events = async (
           sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
         )
         .skip((parseInt(page) - 1) * parseInt(pageSize))
-        .limit(pageSize),
+        .limit(pageSize)
+        .populate("organizer"),
       total: await Event.countDocuments(query),
     };
     console.log(result);
