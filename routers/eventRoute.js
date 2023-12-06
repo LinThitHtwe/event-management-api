@@ -12,6 +12,7 @@ const {
   getEventsByOrganizerId,
   getEvents,
   getEventsByOrganizer_Id,
+  paymentsByEvent,
 } = require("../controllers/eventController");
 
 router.get("/sort", getSortValue);
@@ -24,5 +25,6 @@ router.get("/find/:eventId", getEventById);
 router.get("/total-avaliable-ticket/:eventId", getTotalAvailableTicketByEvent);
 router.get("/events-by-organizer", getEventsByOrganizerId);
 router.get("/events-by-organizer/:organizerId", getEventsByOrganizer_Id);
+router.get("/payments/:eventId", paymentsByEvent);
 
 module.exports = router;

@@ -9,7 +9,7 @@ const {
 const { getTicketsByEventId } = require("../services/ticketService");
 const { getOrganizerIdFromToken } = require("../helper");
 
-const postCreateEvent = async (req, res) => {
+const postCreateEvent = async (req, res, next) => {
   try {
     const { event, ticketInfos } = req.body;
     const id = await getOrganizerIdFromToken(req, res);
@@ -39,7 +39,18 @@ const postCreateEvent = async (req, res) => {
     res.json(createdTicketInfo);
   } catch (error) {
     console.error("Error in postCreateEvent:", error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
+  }
+};
+
+const paymentsByEvent = async (req, res) => {
+  const { eventId } = req.params;
+  try {
+    const evnet = await eventService.get_all_event_payments(eventId);
+    res.json(evnet);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -288,6 +299,19 @@ const getEventsByOrganizer_Id = async (req, res) => {
   return res.json(events);
 };
 
+const getEventsByOrganizer_Id = async (req, res) => {
+  const { organizerId } = req.params;
+  console.log(
+    "🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:",
+    organizerId
+  );
+  const events = await eventService.get_event_by_organizer_id(organizerId);
+  if (events.error) {
+    return res.status(404).json("No Data Found");
+  }
+  return res.json(events);
+};
+
 module.exports = {
   getEventsByOrganizer_Id,
   getEvents,
@@ -301,4 +325,6 @@ module.exports = {
   makeBoosts,
   getTotalAvailableTicketByEvent,
   getEventsByOrganizerId,
+  getEventsByOrganizer_Id,
+  paymentsByEvent,
 };
