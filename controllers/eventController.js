@@ -41,7 +41,16 @@ const postCreateEvent = async (req, res, next) => {
     console.error("Error in postCreateEvent:", error);
     res.status(500).json({ error: "Internal Server Error" });
     next(error);
+  }
+};
 
+const paymentsByEvent = async (req, res) => {
+  const { eventId } = req.params;
+  try {
+    const evnet = await eventService.get_all_event_payments(eventId);
+    res.json(evnet);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -283,8 +292,11 @@ const getEventsByOrganizerId = async (req, res) => {
 };
 
 const getEventsByOrganizer_Id = async (req, res) => {
-  const {organizerId} = req.params;
-  console.log("🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:", organizerId);
+  const { organizerId } = req.params;
+  console.log(
+    "🚀 ~ file: eventController.js:285 ~ constgetEventsByOrganizer_Id= ~ id:",
+    organizerId
+  );
   const events = await eventService.get_event_by_organizer_id(organizerId);
   if (events.error) {
     return res.status(404).json("No Data Found");
@@ -304,5 +316,6 @@ module.exports = {
   makeBoosts,
   getTotalAvailableTicketByEvent,
   getEventsByOrganizerId,
-  getEventsByOrganizer_Id
+  getEventsByOrganizer_Id,
+  paymentsByEvent,
 };

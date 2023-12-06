@@ -61,7 +61,9 @@ const get_events = async (
       organizerId ? new mongoose.Types.ObjectId(organizerId) : null
     );
 
-    const isCriteriaEmpty = Object.values(criteria).every((value) => value === "");
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
 
     let query = {};
 
@@ -73,7 +75,9 @@ const get_events = async (
 
     let result = {
       content: await Event.find(query)
-        .sort(sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 })
+        .sort(
+          sortBy === "trending" ? { trendingLevel: -1 } : { eventStartDate: -1 }
+        )
         .skip((parseInt(page) - 1) * parseInt(pageSize))
         .limit(pageSize),
       total: await Event.countDocuments(query),
@@ -113,6 +117,14 @@ const get_event_by_id = async (eventId) => {
     return error;
   }
 };
+const get_all_event_payments = async (eventId) => {
+  try {
+    const result = await Event.findById(eventId).populate("payments");
+    return result;
+  } catch (error) {
+    return { error: error };
+  }
+};
 
 const make_boots = async (eventId) => {
   try {
@@ -127,7 +139,9 @@ const make_boots = async (eventId) => {
 
 const get_event_by_organizer_id = async (organizerId) => {
   try {
-    const result = await Event.find({ organizer: organizerId }).populate("organizer");
+    const result = await Event.find({ organizer: organizerId }).populate(
+      "organizer"
+    );
     return result;
   } catch (error) {
     return { error: error };
@@ -242,14 +256,18 @@ const sortEvents_text = (data, asc, sort) => {
   const sortedData = data.sort((a, b) => {
     const nameA = a[sort] || "";
     const nameB = b[sort] || "";
-    return asc === "true" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+    return asc === "true"
+      ? nameA.localeCompare(nameB)
+      : nameB.localeCompare(nameA);
   });
   return sortedData;
 };
 
 const sortEvents_trendingLevel = (data, asc) => {
   const sortedData = data.sort((a, b) =>
-    asc === "true" ? a.trendingLevel - b.trendingLevel : b.trendingLevel - a.trendingLevel
+    asc === "true"
+      ? a.trendingLevel - b.trendingLevel
+      : b.trendingLevel - a.trendingLevel
   );
   return sortedData;
 };
@@ -267,6 +285,7 @@ module.exports = {
   get_events,
   get_all_event,
   get_event_by_id,
+  get_all_event_payments,
   add_event,
   delete_by_id,
   format_ui_date_to_db_date,
