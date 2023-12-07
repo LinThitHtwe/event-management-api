@@ -82,7 +82,7 @@ const totalTicketSale = async (req, res) => {
     totalTicketSaleByType: resultArray,
     toalTicketByPayment: toalTicketByPayment,
   };
-  return res.json(ticketPromises);
+  return res.json(returnValues);
 };
 
 const getAllOverviewData = async (req, res) => {
