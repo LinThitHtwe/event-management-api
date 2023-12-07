@@ -29,10 +29,10 @@ require("./config/db")();
 app.use("/api/v1", router);
 
 //Error Handler Middleware
-app.use(badRequestHandler);
-app.use(internalServerErrorHandler);
-app.use(methodNotAllowedHandler);
-app.use(notFoundHandler);
+// app.use(badRequestHandler);
+// app.use(internalServerErrorHandler);
+// app.use(methodNotAllowedHandler);
+// app.use(notFoundHandler);
 
 app.listen(process.env.PORT, function () {
   console.log("Server listening on", process.env.PORT);

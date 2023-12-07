@@ -5,6 +5,7 @@ const {
   signupForVerification,
   loginForAdmin,
   loginForOrganzier,
+  loginForStaff,
   generateToken,
   otpGenerate,
   verifyOtp,
@@ -14,8 +15,9 @@ const {
 router.post("/signup_staff", signupForStaff);
 router.post("/signup_organizer", signupForOrganizer);
 router.get("/verify/:userId/:token", signupForVerification);
-router.post("/login_staff", loginForAdmin);
+router.post("/login_staff", loginForStaff);
 router.post("/login_organizer", loginForOrganzier);
+router.post("/login_admin", loginForAdmin);
 router.post("/refresh", generateToken);
 router.post("/get_otpcode", otpGenerate);
 router.post("/verify_otpcode", verifyOtp);
