@@ -1,6 +1,10 @@
 const { boolean } = require("joi");
 const eventService = require("../services/eventService");
 const paymentSevice = require("../services/paymentService");
+const {
+  add_organizer_payment_invoice,
+} = require("../services/organizerPaymentInvoiceService");
+const { add_upgrade_payment } = require("../services/upgradePaymentService");
 
 const {
   add_ticket_info,
@@ -120,10 +124,46 @@ const boostsList = async (req, res) => {
 };
 
 const makeBoosts = async (req, res) => {
-  const eventId = req.params.id;
-
-  const result = await eventService.make_boots(eventId);
+  // const eventId = req.params.id;
+  const { eventId, upgradePayment, amount, organizerId } = req.body;
+  const result = Promise.all(async () => {
+    const upg = await add_upgrade_payment(upgradePayment);
+    const evn = await eventService.make_boots(eventId);
+    if (evn && upg) {
+      await add_organizer_payment_invoice(
+        amount,
+        upgradePayment,
+        eventId,
+        organizerId
+      );
+    }
+  });
   res.json("Successfully boost");
+};
+
+const boostEvent = async (req, res) => {
+  try {
+    const organizerId = await getOrganizerIdFromToken(req, res);
+    console.log(organizerId);
+    // if (organizerId === null) {
+    //   return res.status(403).send("Invalid token.");
+    // }
+
+    const paymentForBoost = req.body.payment;
+    const payment = await add_organizer_payment_invoice({
+      ...paymentForBoost,
+      organizer: organizerId,
+    });
+    const boostSuccess = await eventService.make_boots(req.body.payment.event);
+
+    if (!payment.error) {
+      return res.status(200).json({ payment, boostSuccess });
+    } else {
+      return res.status(404).json({ message: messages.notFound });
+    }
+  } catch (error) {
+    res.json({ error });
+  }
 };
 
 const getTotalAvailableTicketByEvent = async (req, res) => {
@@ -219,6 +259,7 @@ const getEventsByOrganizer_Id = async (req, res) => {
 };
 
 module.exports = {
+  boostEvent,
   getEventsByOrganizer_Id,
   getEvents,
   getSortValue,

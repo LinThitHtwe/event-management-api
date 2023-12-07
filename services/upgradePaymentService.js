@@ -29,6 +29,15 @@ const add_upgrade_payment = async (upgradePaymentData) => {
   }
 };
 
+const delete_upgrade_payment = async (id) => {
+  try {
+    const result = await UpgradePayment.deleteOne(id);
+    return { data: result };
+  } catch (error) {
+    return { error: error };
+  }
+};
+
 const upgrade_upgrade_payment = async (
   upgradePaymentId,
   upgradePaymentData

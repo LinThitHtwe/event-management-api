@@ -1,10 +1,10 @@
 const router = require("express").Router();
 
 const {
+  boostEvent,
   getSortValue,
   postCreateEvent,
   getEvent,
-  searchValue,
   boostsList,
   getEventById,
   makeBoosts,
@@ -19,7 +19,7 @@ router.get("/sort", getSortValue);
 router.get("/", getEvents);
 router.post("/create", postCreateEvent);
 router.get("/boost", boostsList);
-router.post("/boost/:id", makeBoosts);
+router.post("/boost", boostEvent);
 router.get("/find/:eventId", getEventById);
 router.get("/total-avaliable-ticket/:eventId", getTotalAvailableTicketByEvent);
 router.get("/events-by-organizer", getEventsByOrganizerId);
