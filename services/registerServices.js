@@ -101,18 +101,20 @@ const register = async (data, role, res) => {
     const userId = user._id;
 
     const send_message = `http://localhost:${process.env.CLIENT_PORT}/verification/${userId}/${token}`;
-    const paymentData = data.payment;
-    const response = [];
-    for (const payment of paymentData) {
-      try {
-        const addedPayment = await add_payment({
-          ...payment,
-          organizer: userId,
-        });
+    if (role == Role.organzier) {
+      const paymentData = data.payment;
+      const response = [];
+      for (const payment of paymentData) {
+        try {
+          const addedPayment = await add_payment({
+            ...payment,
+            organizer: userId,
+          });
 
-        response.push(addedPayment);
-      } catch (error) {
-        return res.json(error);
+          response.push(addedPayment);
+        } catch (error) {
+          return res.json(error);
+        }
       }
     }
     await sendEmail(data.email, "Verify Email", send_message);
@@ -138,8 +140,14 @@ const verification = async (req, res) => {
       (await Organizer.findOne({ _id: req.params.userId })) ||
       (await Admin.findOne({ _id: req.params.userId }));
     if (!user) return res.status(400).send("Invalid link");
-    await Organizer.updateOne({ _id: req.params.userId }, { $set: { isVerify: true, accountStatus:'active' } });
-    await Admin.updateOne({ _id: req.params.userId }, { $set: { isVerify: true ,accountStatus:'active'} });
+    await Organizer.updateOne(
+      { _id: req.params.userId },
+      { $set: { isVerify: true, accountStatus: "active" } }
+    );
+    await Admin.updateOne(
+      { _id: req.params.userId },
+      { $set: { isVerify: true, accountStatus: "active" } }
+    );
     res.send({ message: "Email Verified Successfully", success: true });
   } catch (error) {
     console.log(error);

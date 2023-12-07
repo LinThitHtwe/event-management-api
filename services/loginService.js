@@ -17,10 +17,12 @@ const login = async (data, role, res, req) => {
     const schema = await loginSchema.validateAsync(data);
     const { email, password } = data;
     let foundUser;
+    console.log("email: " + email + " password: " + password);
     if (role === Role.organzier) {
       foundUser = await Organizer.findOne({ email: email });
     } else {
       foundUser = await Admin.findOne({ email: email });
+      console.log("foundUser", foundUser);
     }
 
     if (!foundUser) {
@@ -73,7 +75,7 @@ const login = async (data, role, res, req) => {
         user: {
           ...foundUser._doc,
         },
-        accessToken: `Bearer ${accessToken}`,
+        accessToken: `${accessToken}`,
         refreshToken: refreshToken,
         expiresIn: "30s",
       };

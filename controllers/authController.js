@@ -61,8 +61,11 @@ const signupForVerification = async (req, res) => {
 const loginForOrganzier = async (req, res) => {
   await login(req.body, Role.organzier, res, req);
 };
+const loginForStaff = async (req, res) => {
+  await login(req.body, Role.staff, res, req);
+};
 const loginForAdmin = async (req, res) => {
-  await login(req.body, Role.staff, res);
+  await login(req.body, Role.superAdmin, res, req);
 };
 const generateToken = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
@@ -118,6 +121,7 @@ module.exports = {
   logout,
   otpGenerate,
   loginForAdmin,
+  loginForStaff,
   generateToken,
   loginForOrganzier,
   signupForStaff,
