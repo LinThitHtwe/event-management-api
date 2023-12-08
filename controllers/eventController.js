@@ -144,20 +144,19 @@ const makeBoosts = async (req, res) => {
 const boostEvent = async (req, res) => {
   try {
     const organizerId = await getOrganizerIdFromToken(req, res);
-    console.log(organizerId);
-    // if (organizerId === null) {
-    //   return res.status(403).send("Invalid token.");
-    // }
+    if (organizerId === null) {
+      return res.status(403).send("Invalid token.");
+    }
 
-    const paymentForBoost = req.body.payment;
-    const payment = await add_organizer_payment_invoice({
-      ...paymentForBoost,
+    const { payment } = req.body.body;
+    const times = Number(payment.amount) / 20;
+    const paymentResult = await add_organizer_payment_invoice({
+      ...payment,
       organizer: organizerId,
     });
-    const boostSuccess = await eventService.make_boots(req.body.payment.event);
-
+    const boostSuccess = await eventService.make_boots(payment.event, times);
     if (!payment.error) {
-      return res.status(200).json({ payment, boostSuccess });
+      return res.status(200).json({ paymentResult, boostSuccess });
     } else {
       return res.status(404).json({ message: messages.notFound });
     }
