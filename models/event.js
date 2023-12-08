@@ -14,7 +14,7 @@ const eventSchema = new Schema(
     description: { type: String },
     organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Organizer" },
     payments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Payment" }],
-    trendingLevel: { type: Number },
+    trendingLevel: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
