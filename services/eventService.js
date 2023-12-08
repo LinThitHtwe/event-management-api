@@ -127,10 +127,10 @@ const get_all_event_payments = async (eventId) => {
   }
 };
 
-const make_boots = async (eventId) => {
+const make_boots = async (eventId, times) => {
   try {
     const result = await Event.findById(eventId);
-    result.trendingLevel = Number(result.trendingLevel) + 1;
+    result.trendingLevel = Number(result.trendingLevel) + times;
     await result.save();
     return result;
   } catch (error) {
