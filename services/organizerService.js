@@ -8,14 +8,53 @@ const create_organizer = async (organizerData) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
-const get_organizers = async () => {
+const get_organizers = async (
+  page,
+  pageSize,
+  name,
+  accountStatus = "active",
+  sortBy = "accountLevel"
+) => {
   try {
-    const organizers = await Organizer.find();
-    return organizers;
+    let criteria = {};
+
+    criteria = addConditionToCriteria(
+      criteria,
+      "name",
+      name ? { $regex: new RegExp(`.*${name}.*`, "i") } : null
+    );
+    criteria = addConditionToCriteria(
+      criteria,
+      "accountStatus",
+      accountStatus ? accountStatus : null
+    );
+
+    const isCriteriaEmpty = Object.values(criteria).every(
+      (value) => value === ""
+    );
+
+    let query = {};
+
+    if (!isCriteriaEmpty) {
+      query = {
+        $and: [criteria],
+      };
+    }
+
+    let result = {
+      content: await Organizer.find(query)
+        .sort(sortBy === "blueMark" ? { accountLevel: 1 } : { createdAt: -1 })
+        .skip((parseInt(page) - 1) * parseInt(pageSize))
+        .limit(pageSize),
+      total: await Organizer.countDocuments(query),
+    };
+    console.log(result);
+    return result;
   } catch (error) {
-    throw error;
+    console.log(error);
+    return error;
   }
 };
 
@@ -33,12 +72,7 @@ const get_organizer_by_id = async (organizerId) => {
 
 const update_organizer = async (organizerId, organizerData) => {
   const updates = Object.keys(organizerData);
-  const allowedUpdates = [
-    "name",
-    "companyName",
-    "contact",
-    "bio",
-  ];
+  const allowedUpdates = ["name", "companyName", "contact", "bio"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
@@ -111,9 +145,9 @@ const change_phone = async (organizerId, phoneNo) => {
       throw "Organizer not found";
     }
     return organizer;
-    } catch (error) {
-      throw error;
-    }
+  } catch (error) {
+    throw error;
+  }
 };
 
 const change_email = async (organizerId, email) => {
@@ -127,9 +161,63 @@ const change_email = async (organizerId, email) => {
       throw "Organizer not found";
     }
     return organizer;
-    } catch (error) {
-      throw error;
-    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+// const filterOrganizer = (query) => {
+//   const { page, pageSize, name, accountLevel, accountStatus } = query;
+//   try {
+//     let criteria = {};
+
+//     criteria = addConditionToCriteria(
+//       criteria,
+//       "name",
+//       name
+//     )
+
+//     criteria = addConditionToCriteria(
+//       criteria,
+//       "accountLevel",
+//       accountLevel
+//     )
+
+//     criteria = addConditionToCriteria(
+//       criteria,
+//       "accountStatus",
+//       accountStatus
+//     )
+
+//     const isCriteriaEmpty = Object.values(criteria).every(
+//       (value) => value === ""
+//     );
+
+//     let query = {};
+
+//     if (!isCriteriaEmpty) {
+//       query = {
+//         $and: [criteria],
+//       };
+//     }
+
+//     const result = Organizer.find(query)
+//       .skip((page-1) * pageSize)
+//       .sort({accountLevel: -1})
+//       .limit(pageSize);
+
+//     return result;
+
+//   } catch (error) {
+//     return error;
+//   }
+// }
+
+const addConditionToCriteria = (criteria, key, value) => {
+  if (value) {
+    return { ...criteria, [key]: value };
+  }
+  return criteria;
 };
 
 module.exports = {
@@ -141,4 +229,5 @@ module.exports = {
   manage_organizer_status,
   change_phone,
   change_email,
+  // filterOrganizer,
 };

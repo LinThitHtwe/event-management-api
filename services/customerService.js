@@ -28,8 +28,18 @@ const add_customer = async (customerData) => {
   }
 };
 
+const remove_customer = async (customerId) => {
+  try {
+    const result = await Customer.findByIdAndRemove(customerId);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   get_all_customer,
   get_customer_by_id,
   add_customer,
+  remove_customer,
 };

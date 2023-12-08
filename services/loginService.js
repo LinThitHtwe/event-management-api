@@ -12,15 +12,17 @@ const messages = {
   loginError: "Oops! Something went wrong.",
 };
 
-const login = async (data, role, res) => {
+const login = async (data, role, res, req) => {
   try {
     const schema = await loginSchema.validateAsync(data);
     const { email, password } = data;
     let foundUser;
+    console.log("email: " + email + " password: " + password);
     if (role === Role.organzier) {
       foundUser = await Organizer.findOne({ email: email });
     } else {
       foundUser = await Admin.findOne({ email: email });
+      console.log("foundUser", foundUser);
     }
 
     if (!foundUser) {
@@ -41,22 +43,26 @@ const login = async (data, role, res) => {
 
     const match = await bcrypt.compare(password, foundUser.password);
     if (match) {
-      const role = Object.values(foundUser.role);
       const accessToken = jwt.sign(
         {
           UserInfo: {
+            id: foundUser._id,
             email: foundUser.email,
-            role: role,
+            role: foundUser.role,
           },
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30s",
+          expiresIn: "1d",
         }
       );
-      const refreshToken = jwt.sign({ email: foundUser.email }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-      });
+      const refreshToken = jwt.sign(
+        { email: foundUser.email, id: foundUser._id, role: foundUser.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "5d",
+        }
+      );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "None",
@@ -66,9 +72,10 @@ const login = async (data, role, res) => {
       res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "None", secure: true });
 
       const result = {
-        role: foundUser.role,
-        email: foundUser.email,
-        accessToken: `Bearer ${accessToken}`,
+        user: {
+          ...foundUser._doc,
+        },
+        accessToken: `${accessToken}`,
         refreshToken: refreshToken,
         expiresIn: "30s",
       };

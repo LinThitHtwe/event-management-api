@@ -12,6 +12,7 @@ const Organizer = require("../models/organizer");
 const Role = require("../config/role");
 const { add_admin } = require("../services/adminService");
 const { create_organizer } = require("../services/organizerService");
+const { add_payment } = require("../services/paymentService");
 
 const sendEmail = async (email, subject, text) => {
   try {
@@ -99,7 +100,23 @@ const register = async (data, role, res) => {
 
     const userId = user._id;
 
-    const send_message = `http://localhost:${process.env.PORT}/api/v1/auth/verify/${userId}/${token}`;
+    const send_message = `http://localhost:${process.env.CLIENT_PORT}/verification/${userId}/${token}`;
+    if (role == Role.organzier) {
+      const paymentData = data.payment;
+      const response = [];
+      for (const payment of paymentData) {
+        try {
+          const addedPayment = await add_payment({
+            ...payment,
+            organizer: userId,
+          });
+
+          response.push(addedPayment);
+        } catch (error) {
+          return res.json(error);
+        }
+      }
+    }
     await sendEmail(data.email, "Verify Email", send_message);
 
     return res.status(201).json({
@@ -116,19 +133,25 @@ const register = async (data, role, res) => {
 };
 
 const verification = async (req, res) => {
+  console.log("Verify");
   try {
     let user;
     user =
       (await Organizer.findOne({ _id: req.params.userId })) ||
       (await Admin.findOne({ _id: req.params.userId }));
-
     if (!user) return res.status(400).send("Invalid link");
-    (await Organizer.updateOne({ _id: req.params.userId, isVerify: true })) ||
-      Admin.updateOne({ _id: req.params.userId, isVerfiy: true });
-    res.send("Email Verified Successfully");
+    await Organizer.updateOne(
+      { _id: req.params.userId },
+      { $set: { isVerify: true, accountStatus: "active" } }
+    );
+    await Admin.updateOne(
+      { _id: req.params.userId },
+      { $set: { isVerify: true, accountStatus: "active" } }
+    );
+    res.send({ message: "Email Verified Successfully", success: true });
   } catch (error) {
-    res.status(400).send("An error occurred while verifying");
+    console.log(error);
   }
 };
 
-module.exports = { register, verification };
+module.exports = { register, verification, sendEmail };

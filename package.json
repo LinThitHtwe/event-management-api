@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@levminer/speakeasy": "^1.4.2",
+    "@supabase/supabase-js": "^2.39.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
@@ -20,6 +22,7 @@
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.1",
+    "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.7",
     "nodemon": "^3.0.1"
   }
