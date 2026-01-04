@@ -1,13 +1,13 @@
 # Event Management API release V 1.0
 
-🎉 Meet the Team Project's Event Management API v1.0, crafted by the dedicated collaboration of 
+Meet the Team Project's Event Management API v1.0, crafted by the dedicated collaboration of 
 [Antaraes](https://github.com/Antaraes), 
 [heinminlatt-developer](https://github.com/heinminlatt-developer), 
 [LinThitHtwe](https://github.com/LinThitHtwe), 
 [LinnHtet29](https://github.com/LinnHtet29), 
 [YeYint3424](https://github.com/YeYint3424), 
 [shinewwaihtun](https://github.com/shinewwaihtun), and 
-[HponeMyatThu](https://github.com/HponeMyatThu)! 🚀
+[HponeMyatThu](https://github.com/HponeMyatThu)!
 
 
 ## Project Features
